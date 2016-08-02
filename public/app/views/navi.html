@@ -1,0 +1,22 @@
+<div class="ui small menu">
+  <a href="/" class="">
+    <img id="logo" src="/assets/img/logo.png">
+  </a>
+  <div class="right menu">
+     <a class="item borderless">Pages</a>
+     <a class="item borderless">About</a>
+     <a class="item borderless">Contact</a>
+     <div class="item">
+         <a ng-if="details.loggedIn == false" href="/login"><div class="ui tiny blue submit button">Login</div></a>
+         <a ng-click="logout()" ng-if="details.loggedIn == true" href="/login">
+             <div class="ui tiny blue submit button">Logout</div>
+         </a>
+     </div>
+     <div ng-if="details.loggedIn == false" class="item borderless no-pad-left">
+        <a href="/signup">
+            <div class="ui tiny green labeled icon button">
+            <i class="signup icon"></i>Sign Up</div>
+        </a>
+    </div>
+  </div>
+</div>

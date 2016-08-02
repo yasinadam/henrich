@@ -1,0 +1,52 @@
+<div navi></div>
+
+<div id="login-column" class="ui four column doubling stackable grid container centered">
+
+    <div class="ui two column centered grid very padded segment side-pad">
+        <div class="column row">
+            <h2 class="ui header">Signup Form</h2>
+        </div>
+        <div class="four column centered row">
+            <form name="signupForm" ng-submit="signupDataSubmit(signupForm.$valid)" class="ui form" novalidate>
+                <div class="field">
+                    <div class="ui left icon input"> <i class="at icon"></i>
+                        <input name="email" type="email" required placeholder="Email Address" ng-model="signupData.email" ng-minlength="3" ng-model-options="{ debounce:1500 }">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="privacy icon"></i> <input name="password" required
+                        placeholder="Password" type="password" ng-minlength="6"
+                        ng-model="signupData.password" ng-model-options="{ debounce: 1500 }">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui left icon input">
+                        <i class="privacy icon"></i> <input name="confirmPassword" required
+                        placeholder="Confirm Password" type="password" ng-minlength="6"
+                        ng-model="signupData.confirmPassword" data-password-verify="signupData.password" ng-model-options="{ debounce: 1500 }">
+                    </div>
+                </div>
+                <div class="field tl">
+                    <button class="fluid ui primary basic button" ng-disabled="signupForm.$invalid"
+                    type="submit">Submit</button>
+                </div>
+            </form>
+            <div id="login-alert" class="ui bottom warning message hidden">
+                {{alerts.signup}}
+            </div>
+
+            <div id="login-alert" ng-if="signupForm.email.$invalid &&
+            !signupForm.email.$pristine" class="ui bottom warning message">The email address is invalid.</div>
+
+            <div id="login-alert" ng-if="signupForm.password.$invalid &&
+            !signupForm.password.$pristine" class="ui bottom warning message">The Password should be minimum 6 characters.</div>
+
+            <div id="login-alert" ng-if="signupData.password !== signupData.confirmPassword && !signupForm.password.$pristine && !signupForm.confirmPassword.$pristine" class="ui bottom warning message">Password and confirm password do not match.</div>
+            {{signupForm.verify}}
+        </div>
+    </div>
+
+</div>
+
+<div foot></div>

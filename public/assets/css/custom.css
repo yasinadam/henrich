@@ -1,0 +1,26 @@
+.white {color: #fff !important;}
+.grey {color: #DADADA;}
+.tl {text-align: left;}
+.no-pad-left {padding-left: 0px !important;}
+.side-pad {
+    padding-left: 25px !important;
+    padding-right: 25px !important;
+}
+
+#splash {
+    background: url(../img/splash1.jpg);
+    background-size: cover;
+    height: 92vh;
+    padding-top: 100px;
+}
+
+#logo {padding: 4px 0 0 20px;}
+
+#login-column {
+    padding-top: 50px;
+    margin-bottom: 100px;
+}
+
+#footer {
+
+}
