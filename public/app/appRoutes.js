@@ -21,7 +21,14 @@ app.config(function($routeProvider, $locationProvider, $httpProvider) {
 
     .when('/account', {
         templateUrl : viewDir+'member/account-view.html',
-        controller  : 'MemberCtrl'
+        controller  : 'MemberCtrl',
+        type        : 'protected'
+    })
+
+    .when('/profile', {
+        templateUrl : viewDir+'member/profile-view.html',
+        controller  : 'ProfileCtrl',
+        type        : 'protected'
     })
 
     .otherwise({
@@ -32,24 +39,29 @@ app.config(function($routeProvider, $locationProvider, $httpProvider) {
 
 });
 
-app.run(function($http, $localStorage, $log, $location, details) {
+app.run(function($http, $localStorage, $log, $location, details, $rootScope) {
     $('body').hide();
-    if($location.path() == '/account') {
-        var token = $localStorage.token;
-        if(token) {
-            $http.post('/api/member/check-token', {data: token}).then(function(res) {
-                if(res.data.status == true) {
-                    // verified
-                    details.loggedIn = true;
+    $rootScope.$on('$routeChangeSuccess', function (e, current, pre) {
+        var type = current.$$route.type;
+        if(type !== undefined) {
+            var type = current.$$route.type;
+            if(type == 'protected') {
+                var token = $localStorage.token;
+                if(token) {
+                    $http.post('/api/member/check-token', {data: token}).then(function(res) {
+                        if(res.data.status == true) {
+                            // verified
+                            details.loggedIn = true;
+                        } else {
+                            details.loggedIn = false;
+                            $location.path('/login');
+                        }
+                    })
                 } else {
                     details.loggedIn = false;
                     $location.path('/login');
                 }
-            })
-        } else {
-            details.loggedIn = false;
-            $location.path('/login');
+            }
         }
-    }
-
+    })
 })

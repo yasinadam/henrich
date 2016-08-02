@@ -12,8 +12,17 @@ app.factory('alerts', function() {
     }
 })
 
+app.factory('user', function() {
+    return {
+        _id: '',
+        name: '',
+        email: '',
+        password: ''
+    }
+})
 
-app.service('member', function($localStorage, $location, $http, auth, details, alerts) {
+
+app.service('member', function($localStorage, $location, $http, auth, details, alerts, user) {
     var member = {};
 
     member.logout = function() {
@@ -53,6 +62,28 @@ app.service('member', function($localStorage, $location, $http, auth, details, a
             }
         })
         $('#login-container').removeClass('loading');
+    }
+
+    member.getProfileData = function(callback) {
+        auth.getToken(function(token) {
+            $http.post('/api/member/get-profile-data', {data: token}).then(function(response) {
+                if(response.data.success == true) {
+                    callback(response.data.data);
+                } else {
+                    // error
+                }
+            })
+        })
+    }
+
+    member.saveProfileData = function(callback) {
+        $http.post('/api/member/save-profile-data', {data: user}).then(function(response) {
+            if(response.data.success == true) {
+                callback(response.data.data);
+            } else {
+                // error
+            }
+        })
     }
 
     return member;
@@ -114,4 +145,15 @@ app.service('hacks', function($location) {
         $('body').css('background', bodyColor);
     }
     return hacks;
+})
+
+app.service('func', function() {
+    var func = {};
+
+    func.toggle = function(value, callback) {
+        value = value === false ? true: false;
+        callback(value);
+    }
+
+    return func;
 })

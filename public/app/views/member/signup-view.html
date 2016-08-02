@@ -10,6 +10,11 @@
             <form name="signupForm" ng-submit="signupDataSubmit(signupForm.$valid)" class="ui form" novalidate>
                 <div class="field">
                     <div class="ui left icon input"> <i class="at icon"></i>
+                        <input name="name" type="text" required placeholder="Full Name" ng-model="signupData.name" ng-minlength="3" ng-model-options="{ debounce:1500 }">
+                    </div>
+                </div>
+                <div class="field">
+                    <div class="ui left icon input"> <i class="at icon"></i>
                         <input name="email" type="email" required placeholder="Email Address" ng-model="signupData.email" ng-minlength="3" ng-model-options="{ debounce:1500 }">
                     </div>
                 </div>
@@ -35,6 +40,9 @@
             <div id="login-alert" class="ui bottom warning message hidden">
                 {{alerts.signup}}
             </div>
+
+            <div id="login-alert" ng-if="signupForm.name.$invalid &&
+            !signupForm.name.$pristine" class="ui bottom warning message">The name should be more than 3 characters.</div>
 
             <div id="login-alert" ng-if="signupForm.email.$invalid &&
             !signupForm.email.$pristine" class="ui bottom warning message">The email address is invalid.</div>

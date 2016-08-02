@@ -36,6 +36,28 @@ module.exports = function(app, models) {
 		})
 	});
 
+	app.post('/api/member/get-profile-data', function(req, res) {
+		var decodedEmail = jwt.verify(req.body.data, jwtSecret);
+		func.getRecord(models.User, 'email', decodedEmail, function(status) {
+			if(status !== false) {
+				func.sendInfo(res, true, {data: status});
+			} else {
+				func.sendInfo(res, status, {errMessage: 'Could not find any records.'});
+			}
+		})
+	});
+
+	app.post('/api/member/save-profile-data', function(req, res) {
+		var user = req.body.data
+		func.updateRecord(models.User, {key: 'email', value: user.email}, user, function(status) {
+			if(status !== false) {
+				func.sendInfo(res, true, {data: status});
+			} else {
+				func.sendInfo(res, status, {errMessage: 'Could not find any records.'});
+			}
+		})
+	});
+
 	app.post('/api/member/check-token', function(req, res) {
 		var token = req.body.data;
 		if(token !== false) {

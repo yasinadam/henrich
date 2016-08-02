@@ -14,7 +14,8 @@ app.controller('NaviCtrl', function($scope, details, member, hacks) {
     }
 })
 
-app.controller('MemberCtrl', function($scope, $http, $location, auth, member, alerts) {
+app.controller('MemberCtrl', function($scope, $http, $location, auth, member, alerts, user) {
+    $scope.user = user;
     $scope.signupData = {};
     $scope.confirmPassword = '';
     $scope.loginData = {};
@@ -37,5 +38,34 @@ app.controller('MemberCtrl', function($scope, $http, $location, auth, member, al
             })
         })
     }
+
+})
+
+
+app.controller('ProfileCtrl', function($scope, $http, member, user, func) {
+    $scope.user = user;
+    $scope.editButton = false;
+
+    $scope.editButtonState = function() {
+        func.toggle($scope.editButton, function(response) {
+            $scope.editButton = response;
+        })
+    }
+
+    $scope.getProfileData = function() {
+        member.getProfileData(function(data) {
+            user.name = data.name;
+            user.email = data.email;
+            user.password = data.password;
+        })
+    }
+
+    $scope.saveProfileData = function() {
+        member.saveProfileData(function(response) {
+            console.log(response);
+        })
+    }
+
+    $scope.getProfileData();
 
 })

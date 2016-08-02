@@ -34,6 +34,41 @@ func.addRecord = function(model, dataObj, callback) {
     })
 }
 
+func.getRecord = function(model, field, value, callback) {
+    var query = {};
+    query[field] = value;
+    model.findOne(query, function(err, doc) {
+        if(err) {callback(err);}
+        if(doc) {
+            callback(doc);
+        } else {
+            callback(false);
+        }
+    })
+}
+
+func.updateRecord = function(model, selector, dataObj, callback) {
+    query = {};
+    query[selector.key] = selector.value;
+    console.log(query);
+
+    model.findOne(query, function(err, doc) {
+        for (var prop in dataObj) {
+            if(prop !== '_id') {
+                doc[prop] = dataObj[prop];
+            }
+        }
+        doc.save(function(err) {
+            if(err) {
+                console.log(err);
+                callback(err);
+            } else {
+                callback(true);
+            }
+        })
+    });
+}
+
 func.sendInfo = function(res, status, dataObj) {
     //console.log(dataObj);
     if(dataObj.data) {
