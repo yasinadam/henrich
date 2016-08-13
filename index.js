@@ -1,19 +1,34 @@
 // Require Express
-var express         = require('express');
-var app             = express();
-var bodyParser      = require('body-parser');
+var express         = require('express'),
+    app             = express(),
+    bodyParser      = require('body-parser'),
+    multiparty      = require('multiparty'),
+    path            = require('path'),
+    fs              = require ('fs.extra'),
+    rimraf          = require('rimraf');
+
 // DB
 var mongoose        = require('mongoose');
+
 // DB Collection
 var User = require(__dirname + '/server/models/user');
+var Project = require(__dirname + '/server/models/project');
+
 // DB config
 var configDB = require('./config/database.js');
+
 // Connect DB
 mongoose.connect(configDB.url);
 
 var models = {};
 models.User = User;
+models.Project = Project;
 
+var utils = {};
+utils.multiparty = multiparty;
+utils.path = path;
+utils.fs = fs;
+utils.rimraf = rimraf;
 // Set Port
 app.set('port', (process.env.PORT || 5002));
 
@@ -30,7 +45,7 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 
 // routes
-require(__dirname + '/server/routes')(app, models);
+require(__dirname + '/server/routes')(app, utils, models);
 
 app.listen(app.get('port'), function() {
     console.log('Node app is running on port', app.get('port'));

@@ -1,0 +1,28 @@
+<div navi></div>
+
+<div class="ui internally grid very padded">
+    <div class="row">
+        <div class="three wide column">
+            <div account-side-navi></div>
+        </div>
+        <div class="twelve wide column">
+            <div class="ui padded container segment">
+                <h2 class="ui header">{{gotProjectInfo.name}}<a href="/projects"><button class="ui right floated button">Project List<i class="reply right icon"></i></button></a></h2>
+                <div class="ui divider "></div>
+                <div class="ui hidden divider"></div>
+                <h3 class="ui header">{{gotProjectInfo.desc}}</h3>
+                <div class="ui hidden divider"></div>
+
+                <div class="row">
+                    <div class="ui link cards">
+                      <div class="card" ng-repeat="img in gotProjectImages">
+                        <div class="image">
+                            <img src="/uploads/images/{{gotProjectInfo.userID}}/{{gotProjectInfo._id}}/{{img}}">
+                        </div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,3 +1,4 @@
+
 app.controller('HomeCtrl', function($scope, $window, $location) {
     $("#semantic").load(function(){
       $('body').show();
@@ -38,11 +39,14 @@ app.controller('MemberCtrl', function($scope, $http, $location, auth, member, al
             })
         })
     }
+})
+
+app.controller('AccountSideNaviCtrl', function($scope, $location) {
+    $scope.currentView = $location.path();
 
 })
 
-
-app.controller('ProfileCtrl', function($scope, $http, member, user, func) {
+app.controller('AccountProfileCtrl', function($scope, $http, member, user, func) {
     $scope.user = user;
     $scope.editButton = false;
 
@@ -68,4 +72,97 @@ app.controller('ProfileCtrl', function($scope, $http, member, user, func) {
 
     $scope.getProfileData();
 
+})
+
+app.controller('AccountSingleCtrl', function($scope, $location, $http, project) {
+    if($location.path() == '/single') {
+        $scope.gotProjectInfo = '';
+        $scope.projectID = $location.search().id;
+        project.getProject($scope.projectID, function(response) {
+            console.log(response);
+            $scope.gotProjectInfo = response.data.info;
+            $scope.gotProjectImages = response.data.images;
+        })
+    }
+})
+
+app.controller('AccountProjectsCtrl', function($scope, project) {
+    $scope.projects = '';
+    project.getAllUserProjects(function(resp) {
+        $scope.projects = resp;
+    })
+
+    $scope.deleteProject = function(projectID, userID) {
+        var projectInfo = {projectID: projectID, userID: userID};
+        console.log(projectInfo);
+        project.deleteProject(projectInfo, function(resp) {
+            //$scope.projects = resp;
+            console.log(resp);
+            if(resp == true) {
+                $('#'+projectID+'').remove();
+            }
+        })
+    }
+
+})
+
+app.controller('AccountAddProjectCtrl', function($scope, $http, $location, auth, Upload, uploadedImages, user) {
+    $scope.user = user;
+    $scope.uploadedImages = uploadedImages;
+    $scope.projectInfo = {};
+    $scope.files = '';
+
+    $scope.addProject = function() {
+        console.log($scope.files);
+        $scope.uploadInProgress = true;
+        $scope.uploadProgress = 0;
+        $scope.uploadedImages = {};
+
+        auth.getToken(function(token){
+            $scope.upload = Upload.upload({
+                url: '/api/project/add-project',
+                method: 'POST',
+                data: {
+                  token: token,
+                  projectInfo: $scope.projectInfo
+                },
+                file: $scope.files
+            }).progress(function(event) {
+                //$scope.uploadProgress = Math.floor(event.loaded / event.total);
+                //$scope.$apply();
+            }).success(function(data, status, headers, config) {
+                $location.path('/single').search('id', data.data);
+            }).error(function(err) {
+                //$scope.uploadInProgress = false;
+                //AlertService.error('Error uploading file: ' + err.message || err);
+            })
+        });
+    }
+})
+
+app.controller('AccountEditProjectCtrl', function($scope, $http, $location, auth, Upload, uploadedImages, user, project) {
+    $scope.files = '';
+    if($location.path() == '/edit-project') {
+        $scope.gotProjectInfo = '';
+        $scope.projectID = $location.search().id;
+        project.getProject($scope.projectID, function(response) {
+            $scope.gotProjectInfo = response.data.info;
+            $scope.gotProjectImages = response.data.images;
+        })
+    }
+    $scope.updateProject = function() {
+        project.updateProject($scope.gotProjectInfo, $scope.files, function(resp) {
+            if(resp.success == true) {$location.path('/single').search('id', $scope.projectID);}
+        })
+    }
+    $scope.deleteImage = function(imgName) {
+        var imgPostArr = {
+            imgName: imgName,
+            projectID: $scope.projectID,
+            userID: $scope.gotProjectInfo.userID
+        };
+        project.deleteImage(imgPostArr, function(resp) {
+            $("[data-img='"+imgPostArr.imgName+"']").remove();
+        })
+    }
 })

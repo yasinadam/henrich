@@ -1,1 +1,5 @@
-var app = angular.module('app',['ngRoute', 'ngStorage']);
+var app = angular.module('app',[
+    'ngRoute',
+    'ngStorage',
+    'ngFileUpload'
+]);

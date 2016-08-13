@@ -1,8 +1,11 @@
 var func = require(__dirname + '/controllers/func.js');
 var jwt = require('jsonwebtoken');
 var jwtSecret 	= 'jwtSecretKey';
+var webtoken = {};
+webtoken.jwt = jwt;
+webtoken.jwtSecret = jwtSecret;
 
-module.exports = function(app, models) {
+module.exports = function(app, utils, models) {
 
 	app.post('/api/member/signup', function(req, res) {
 		func.checkDuplicate(models.User, 'email', req.body.email, function(duplicateStatus) {
@@ -25,7 +28,7 @@ module.exports = function(app, models) {
 		func.checkDuplicate(models.User, ['email', 'password'], [req.body.email, req.body.password], function(duplicateStatus) {
 			if(duplicateStatus == false) {
 				// there's an account match
-				var token = jwt.sign(req.body.email, jwtSecret);
+				var token = webtoken.jwt.sign(req.body.email, webtoken.jwtSecret);
 				func.sendInfo(res, duplicateStatus,
 					{data: token, errMessage: 'Account match!.'});
 			} else {
@@ -37,7 +40,7 @@ module.exports = function(app, models) {
 	});
 
 	app.post('/api/member/get-profile-data', function(req, res) {
-		var decodedEmail = jwt.verify(req.body.data, jwtSecret);
+		var decodedEmail = webtoken.jwt.verify(req.body.data, jwtSecret);
 		func.getRecord(models.User, 'email', decodedEmail, function(status) {
 			if(status !== false) {
 				func.sendInfo(res, true, {data: status});
@@ -63,14 +66,104 @@ module.exports = function(app, models) {
 		if(token !== false) {
 			var decodedEmail = jwt.verify(token, jwtSecret);
 			if(decodedEmail) {
-				res.json({status: true});
+				func.sendInfo(res, true, {message: 'authenticated'});
 			} else {
-				res.json({status: false});
+				func.sendInfo(res, false, {errMessage: 'Invalid'});
 			}
 		} else {
-			res.json({status: false});
+			func.sendInfo(res, false, {errMessage: 'Invalid'});
 		}
 	});
+
+	app.post('/api/project/add-project', function(req, res) {
+		var form = new utils.multiparty.Form();
+		form.parse(req, function(err, fields, files) {
+			var token = fields.token[0];
+			func.IdFromToken(models.User, token, webtoken, function(userID) {
+				var userImgDir = utils.path.join(__dirname, "../public/uploads/images/" + userID);
+				try {
+					utils.fs.mkdirSync(userImgDir);
+				} catch(e) {
+					if (e.code != 'EEXIST') {console.log(e);}
+				}
+				// Add Project to mongo
+				func.addRecord(models.Project, {userID: userID, name:fields['projectInfo[projectName]'][0] , desc: fields['projectInfo[projectDesc]'][0]}, function(projectInfo) {
+					if(files) {
+						func.addImage(files, projectInfo, utils, function(resp) {
+							func.sendInfo(res, true, {message: 'Project Added', data: projectInfo._id});
+						})
+					}
+				})
+			})
+		})
+	});
+
+	app.post('/api/project/get-project-data', function(req, res) {
+		func.getRecord(models.Project, '_id', req.body.data, function(projectInfo) {
+			if(projectInfo) {
+				func.getProjectImages(req.body.data, projectInfo.userID, utils.fs, function(images) {
+					func.sendInfo(res, true, {
+						message: 'Got Project Info',
+						data: {info:projectInfo, images: images}
+					});
+				})
+			}
+		})
+	})
+
+	app.post('/api/project/get-all-projects', function(req, res) {
+		func.IdFromToken(models.User, req.body.token, webtoken, function(userID) {
+			func.getAllRecords(models.Project, 'userID', userID, function(projectsInfo) {
+				if(projectsInfo) {
+					func.sendInfo(res, true, {message: 'Got Projects Info', data: projectsInfo});
+				}
+			})
+		})
+	})
+
+	app.post('/api/project/update-project', function(req, res) {
+		var form = new utils.multiparty.Form();
+		form.parse(req, function(err, fields, files) {
+			var projectInfo = {
+				_id: fields['projectInfo[_id]'],
+				name: fields['projectInfo[name]'],
+				desc: fields['projectInfo[desc]'],
+				userID: fields['projectInfo[userID]']
+			}
+			func.updateRecord(models.Project, {'_id': fields['projectInfo[_id]']}, projectInfo, function(updateStatus) {
+				if(updateStatus == true) {
+					if(files) {
+						func.addImage(files, projectInfo, utils, function(resp) {
+							func.sendInfo(res, true, {message: 'Updated Added'});
+						})
+					}
+					func.sendInfo(res, true, {message: 'Updated Added'});
+				}
+			})
+		})
+	})
+
+
+
+	app.post('/api/project/delete-project', function(req, res) {
+		func.deleteRecord(models.Project, '_id', req.body.projectID, function(deleteStatus) {
+			console.log(deleteStatus);
+			if(deleteStatus == true) {
+				func.deleteProjectImageFolder(req.body, utils, function(status) {
+					func.sendInfo(res, status, {message: 'Deleted Project'});
+				})
+			}
+		})
+	})
+
+	app.post('/api/project/delete-image', function(req, res) {
+		func.deleteImage(req.body, utils.fs, function(deleteStatus) {
+			console.log(deleteStatus);
+			if(deleteStatus == true) {
+				func.sendInfo(res, true, {message: 'Deleted Image'});
+			}
+		})
+	})
 
 	app.get('*', function(req, res) {
         res.render('pages/index');

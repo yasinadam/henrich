@@ -8,6 +8,9 @@
      <a class="item borderless">Contact</a>
      <div class="item">
          <a ng-if="details.loggedIn == false" href="/login"><div class="ui tiny blue submit button">Login</div></a>
+         <a ng-if="details.loggedIn == true" href="/account">
+             <div class="ui tiny submit button">Account</div>
+         </a>
          <a ng-click="logout()" ng-if="details.loggedIn == true" href="/login">
              <div class="ui tiny blue submit button">Logout</div>
          </a>

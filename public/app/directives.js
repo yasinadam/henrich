@@ -22,6 +22,23 @@ app.directive('foot', function() {
 	}
 })
 
+app.directive('accountSideNavi', function() {
+	return {
+		templateUrl: dir+'account/account-side-navi.html',
+		controller: 'AccountSideNaviCtrl',
+	}
+})
+
+app.directive('accountProfileView', function() {
+	return {
+		templateUrl: dir+'account/account-profile-view.html',
+		controller: 'AccountProfileCtrl',
+	}
+})
+
+
+// Utility Directives //
+
 app.directive("passwordVerify", function() {
    return {
       require: "ngModel",

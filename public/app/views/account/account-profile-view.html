@@ -1,0 +1,46 @@
+<div navi></div>
+
+<div class="ui internally grid very padded">
+  <div class="row">
+    <div class="three wide column">
+        <div account-side-navi></div>
+    </div>
+    <div class="twelve wide column">
+        <div class="ui padded container segment">
+            <h2 class="ui header">Profile Page
+                <button ng-if="editButton == false" ng-click="editButtonState()" class="ui right floated button">Edit</button>
+                <button ng-if="editButton == true" ng-click="editButtonState(); saveProfileData()" class="ui primary right floated button">Save</button>
+            </h2>
+
+            <div class="ui divider"></div>
+            <div class="ui hidden divider "></div>
+
+            <div class="ui middle aligned list">
+                <div class="item padded">
+                    <i class="large user icon"></i>
+                    <div ng-if="editButton == false" class="content">
+                      {{user.name}}
+                    </div>
+                    <div ng-if="editButton == true" class="content">
+                      <input type="text" ng-model="user.name">
+                    </div>
+                </div>
+                <div class="item">
+                  <i class="large mail icon"></i>
+                  <div class="content">
+                    {{user.email}}
+                  </div>
+                </div>
+                <div class="item">
+                  <i class="large privacy icon"></i>
+                  <div ng-if="editButton == false" class="content">
+                    {{user.password}}
+                  </div>
+                  <div ng-if="editButton == true" class="content">
+                    <input type="password" ng-model="user.password">
+                  </div>
+                </div>
+            </div>
+        </div>
+      </div>
+  </div>

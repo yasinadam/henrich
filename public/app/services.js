@@ -21,6 +21,10 @@ app.factory('user', function() {
     }
 })
 
+app.factory('uploadedImages', function() {
+    return {}
+})
+
 
 app.service('member', function($localStorage, $location, $http, auth, details, alerts, user) {
     var member = {};
@@ -87,6 +91,80 @@ app.service('member', function($localStorage, $location, $http, auth, details, a
     }
 
     return member;
+})
+
+app.service('project', function($http, auth, Upload, $location) {
+    var project = {};
+
+    project.getProject = function(projectID, callback) {
+        $http.post('/api/project/get-project-data', {data: projectID}).then(function(response) {
+            if(response.data.success == true) {
+                callback(response.data);
+            } else {
+                // error
+            }
+        })
+    }
+
+    project.getAllUserProjects = function(callback) {
+        auth.getToken(function(token) {
+            $http.post('/api/project/get-all-projects', {token: token}).then(function(response) {
+                if(response.data.success == true) {
+                    callback(response.data.data);
+                } else {
+                    // error
+                }
+            })
+        })
+    }
+
+    project.updateProject = function(projectInfo, files, callback) {
+        Upload.upload({
+            url: '/api/project/update-project',
+            method: 'POST',
+            data: {
+              projectInfo: projectInfo,
+            },
+            file: files
+        }).progress(function(event) {
+            //$scope.uploadProgress = Math.floor(event.loaded / event.total);
+            //$scope.$apply();
+        }).success(function(data, status, headers, config) {
+            callback(data);
+        }).error(function(err) {
+            //$scope.uploadInProgress = false;
+            //AlertService.error('Error uploading file: ' + err.message || err);
+        })
+        /*$http.post('/api/project/update-project', {projectInfo: projectInfo}).then(function(response) {
+            if(response.data.success == true) {
+                callback(response.data);
+            } else {
+                // error
+            }
+        })*/
+    }
+
+    project.deleteProject = function(projectInfo, callback) {
+        $http.post('/api/project/delete-project', projectInfo).then(function(response) {
+            if(response.data.success == true) {
+                callback(true);
+            } else {
+                // error
+            }
+        })
+    }
+
+    project.deleteImage = function(imgPostArr, callback) {
+        $http.post('/api/project/delete-image', imgPostArr).then(function(response) {
+            if(response.data.success == true) {
+                callback(response);
+            } else {
+                // error
+            }
+        })
+    }
+
+    return project;
 })
 
 app.service('auth', function($window, $location, $http, $localStorage) {

@@ -1,0 +1,34 @@
+<div navi></div>
+
+<div class="ui internally grid very padded">
+  <div class="row">
+    <div class="three wide column">
+        <div account-side-navi></div>
+    </div>
+    <div class="twelve wide column">
+        <div class="ui padded container segment">
+            <h2 class="ui header">Projects
+                <a ng-href="/add-project"><button class="ui right floated button">Add Project<i class="plus right icon"></i></button></a>
+                <button ng-if="editButton == true" ng-click="editButtonState(); saveProfileData()" class="ui primary right floated button">Save</button>
+            </h2>
+            <div class="ui divider "></div>
+            <div class="ui hidden divider "></div>
+
+            <div class="ui middle aligned divided list">
+                <div id="{{proj._id}}" class="item padded" ng-repeat="proj in projects">
+                    <div class="right floated content">
+                        <a href="/single?id={{proj._id}}"><div class="ui button tiny">View</div></a>
+                        <a href="/edit-project?id={{proj._id}}"><div class="ui button green tiny">Edit</div></a>
+                        <div ng-click="deleteProject(proj._id, proj.userID)" class="ui button red tiny">Delete</div>
+                    </div>
+                    <i class="large image icon"></i>
+                    <div class="content">{{proj.name}}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+  </div>
