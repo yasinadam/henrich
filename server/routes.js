@@ -80,12 +80,6 @@ module.exports = function(app, utils, models) {
 		form.parse(req, function(err, fields, files) {
 			var token = fields.token[0];
 			func.IdFromToken(models.User, token, webtoken, function(userID) {
-				var userImgDir = utils.path.join(__dirname, "../public/uploads/images/" + userID);
-				try {
-					utils.fs.mkdirSync(userImgDir);
-				} catch(e) {
-					if (e.code != 'EEXIST') {console.log(e);}
-				}
 				// Add Project to mongo
 				func.addRecord(models.Project, {userID: userID, name:fields['projectInfo[projectName]'][0] , desc: fields['projectInfo[projectDesc]'][0]}, function(projectInfo) {
 					if(files) {
@@ -101,7 +95,8 @@ module.exports = function(app, utils, models) {
 	app.post('/api/project/get-project-data', function(req, res) {
 		func.getRecord(models.Project, '_id', req.body.data, function(projectInfo) {
 			if(projectInfo) {
-				func.getProjectImages(req.body.data, projectInfo.userID, utils.fs, function(images) {
+				func.getProjectImages(req.body.data, projectInfo.userID, utils, function(images) {
+					console.log(images);
 					func.sendInfo(res, true, {
 						message: 'Got Project Info',
 						data: {info:projectInfo, images: images}

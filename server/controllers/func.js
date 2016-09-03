@@ -93,13 +93,15 @@ func.getAllRecords = function(model, field, value, callback) {
     })
 }
 
-func.getProjectImages = function(projectID, userID, fs, callback) {
-    var dir = __dirname+'../../../public/uploads/images/'+userID+'/'+projectID;
-    fs.readdir(dir, function (err, files) {
-        if (err) {
-            throw err;
-        }
-        callback(files);
+func.getProjectImages = function(projectID, userID, utils, callback) {
+    var s3 = new utils.AWS.S3();
+    //var dir = 'http://s3-eu-west-1.amazonaws.com/uploads/images/'+userID+'/'+projectID;
+    var dir = 'henrich-app';
+
+    var params = { Bucket: dir, Prefix: 'uploads/images/'+userID+'/'+projectID+'/'};
+    s3.listObjects(params, function(err, data) {
+        if (err) console.log(err, err.stack); // an error occurred
+        else     callback(data);         // successful response
     });
 }
 
@@ -161,22 +163,22 @@ func.deleteImage = function(imgPostArr, fs, callback) {
 }
 
 func.addImage = function(files, projectInfo, utils, callback) {
-    var userImgDir = __dirname+"../../../public/uploads/images/" + projectInfo.userID + '/'+ projectInfo._id;
-    var imgArr = [];
-    try {
-        utils.fs.mkdirSync(userImgDir);
-    } catch(e) {
-        if ( e.code != 'EEXIST' ){console.log(e);};
-    }
-    var count = Object.keys(files).length;
+    var s3 = new utils.AWS.S3();
+
     for(var key in files) {
-        //console.log(files[key][0].path);
+        var bodystream = utils.fs.createReadStream(files[key][0].path);
+
         var uploadDate = JSON.stringify(Math.round(new Date().getTime()/1000));
-        var tempPath = files[key][0].path;
-        var targetPath = userImgDir + '/' + uploadDate + '-' + files[key][0].originalFilename;
-        imgArr.push({name: files[key][0].originalFilename, path: projectInfo.userID+'/'+ uploadDate + '-' + files[key][0].originalFilename});
-        utils.fs.move(tempPath, targetPath, function(err) {
-            if(err) {console.log(err);}
+        var targetPath = 'uploads/images/' + projectInfo.userID + '/' + projectInfo._id + '/' + uploadDate + '-' +  files[key][0].originalFilename;
+
+        var params = {
+            Bucket: 'henrich-app',
+            Key: targetPath,
+            Body: bodystream,
+            ACL: 'public-read'
+        };
+        s3.upload(params, function(err, data) {
+            console.log(err, data);
         });
     }
     callback(true);

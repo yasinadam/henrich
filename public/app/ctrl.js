@@ -81,7 +81,8 @@ app.controller('AccountSingleCtrl', function($scope, $location, $http, project) 
         project.getProject($scope.projectID, function(response) {
             console.log(response);
             $scope.gotProjectInfo = response.data.info;
-            $scope.gotProjectImages = response.data.images;
+            $scope.gotProjectImages = response.data.images.Contents;
+            console.log($scope.gotProjectImages);
         })
     }
 })
@@ -106,7 +107,7 @@ app.controller('AccountProjectsCtrl', function($scope, project) {
 
 })
 
-app.controller('AccountAddProjectCtrl', function($scope, $http, $location, auth, Upload, uploadedImages, user) {
+app.controller('AccountAddProjectCtrl', function($scope, $http, $location, auth, Upload, uploadedImages, user, project) {
     $scope.user = user;
     $scope.uploadedImages = uploadedImages;
     $scope.projectInfo = {};
@@ -131,7 +132,7 @@ app.controller('AccountAddProjectCtrl', function($scope, $http, $location, auth,
                 //$scope.uploadProgress = Math.floor(event.loaded / event.total);
                 //$scope.$apply();
             }).success(function(data, status, headers, config) {
-                $location.path('/single').search('id', data.data);
+                $location.path('/projects');
             }).error(function(err) {
                 //$scope.uploadInProgress = false;
                 //AlertService.error('Error uploading file: ' + err.message || err);

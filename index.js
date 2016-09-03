@@ -5,7 +5,18 @@ var express         = require('express'),
     multiparty      = require('multiparty'),
     path            = require('path'),
     fs              = require ('fs.extra'),
-    rimraf          = require('rimraf');
+    rimraf          = require('rimraf'),
+    objectId        = require('mongodb').ObjectID;
+
+var AWS = require('aws-sdk');
+//aws credentials
+AWS.config = new AWS.Config();
+AWS.config.update({
+    accessKeyId: 'AKIAJRVI3C5FVEZ6VNWQ',
+    secretAccessKey: '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'
+});
+AWS.config.update({region:'eu-west-1'});
+
 
 // DB
 var mongoose        = require('mongoose');
@@ -29,6 +40,9 @@ utils.multiparty = multiparty;
 utils.path = path;
 utils.fs = fs;
 utils.rimraf = rimraf;
+utils.objectId = objectId;
+utils.AWS = AWS;
+
 // Set Port
 app.set('port', (process.env.PORT || 5002));
 
