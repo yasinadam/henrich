@@ -6,7 +6,7 @@ var express         = require('express'),
     path            = require('path'),
     fs              = require ('fs.extra'),
     rimraf          = require('rimraf'),
-    objectId        = require('mongodb').ObjectID;
+    //objectId        = require('mongodb').ObjectID;
 
 var AWS = require('aws-sdk');
 //aws credentials
@@ -40,7 +40,7 @@ utils.multiparty = multiparty;
 utils.path = path;
 utils.fs = fs;
 utils.rimraf = rimraf;
-utils.objectId = objectId;
+//utils.objectId = objectId;
 utils.AWS = AWS;
 
 // Set Port
