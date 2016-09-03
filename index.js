@@ -5,7 +5,7 @@ var express         = require('express'),
     multiparty      = require('multiparty'),
     path            = require('path'),
     fs              = require ('fs.extra'),
-    rimraf          = require('rimraf'),
+    rimraf          = require('rimraf');
     //objectId        = require('mongodb').ObjectID;
 
 var AWS = require('aws-sdk');
