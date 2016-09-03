@@ -38,7 +38,7 @@
                     <div class="ui link cards">
                       <div data-img="{{img}}" class="card" ng-repeat="img in gotProjectImages">
                         <div class="image">
-                            <img src="/uploads/images/{{gotProjectInfo.userID}}/{{gotProjectInfo._id}}/{{img}}">
+                            <img src="https://s3-eu-west-1.amazonaws.com/henrich-app/{{img.Key}}">
                         </div>
                         <div class="extra content">
                           <span ng-click="deleteImage(img)" class="right floated">

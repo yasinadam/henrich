@@ -148,7 +148,7 @@ app.controller('AccountEditProjectCtrl', function($scope, $http, $location, auth
         $scope.projectID = $location.search().id;
         project.getProject($scope.projectID, function(response) {
             $scope.gotProjectInfo = response.data.info;
-            $scope.gotProjectImages = response.data.images;
+            $scope.gotProjectImages = response.data.images.Contents;
         })
     }
     $scope.updateProject = function() {

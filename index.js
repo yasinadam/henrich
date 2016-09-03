@@ -11,10 +11,6 @@ var express         = require('express'),
 var AWS = require('aws-sdk');
 //aws credentials
 AWS.config = new AWS.Config();
-AWS.config.update({
-    accessKeyId: 'AKIAJPH6GLSOFDE5AFZQ',
-    secretAccessKey: '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'
-});
 AWS.config.update({region:'eu-west-1'});
 
 
