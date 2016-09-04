@@ -143,11 +143,11 @@ module.exports = function(app, utils, models) {
 	app.post('/api/project/delete-project', function(req, res) {
 		func.deleteRecord(models.Project, '_id', req.body.projectID, function(deleteStatus) {
 			console.log(deleteStatus);
-			if(deleteStatus == true) {
+			//if(deleteStatus == true) {
 				func.deleteProjectImageFolder(req.body, utils, function(status) {
 					func.sendInfo(res, status, {message: 'Deleted Project'});
 				})
-			}
+			//}
 		})
 	})
 

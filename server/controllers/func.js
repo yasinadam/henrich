@@ -145,22 +145,25 @@ func.deleteProjectImageFolder = function(projectInfo, utils, callback) {
     var s3 = new utils.AWS.S3();
     var params = {
         Bucket: 'henrich-app',
-        Key: 'uploads/images/'+projectInfo.userID+'/'+projectInfo.projectID
+        Prefix: 'uploads/images/'+projectInfo.userID+'/'+projectInfo.projectID+'/'
     };
     s3.listObjects(params, function(err, data) {
         if(err){
-            callback(err, err.stack);
+            //callback(err, err.stack);
+            console.log(err, err.stack)
         } else {
+            var tempDeleteArr = [];
+            for(key in data.Contents) {
+                tempDeleteArr.push({Key: data.Contents[key].Key});
+            }
             var params2 = {
-                Bucket: 'STRING_VALUE',
-                Delete: {
-                    Objects: data
-                }
+                Bucket: 'henrich-app',
+                Delete: {Objects: tempDeleteArr}
             };
             s3.deleteObjects(params2, function(err, data) {
-              if (err) console.log(err, err.stack); // an error occurred
-              else     console.log(data);           // successful response
-            });
+              if (err) callback(err, err.stack); // an error occurred
+              else     callback(true);           // successful response
+          });
         }
     });
 

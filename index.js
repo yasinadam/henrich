@@ -5,13 +5,18 @@ var express         = require('express'),
     multiparty      = require('multiparty'),
     path            = require('path'),
     fs              = require ('fs.extra'),
-    rimraf          = require('rimraf');
-    //objectId        = require('mongodb').ObjectID;
+    rimraf          = require('rimraf'),
+    AWS = require('aws-sdk');
 
-var AWS = require('aws-sdk');
-//aws credentials
-AWS.config = new AWS.Config();
-AWS.config.update({region:'eu-west-1'});
+if(process.env.NODE_ENV !== 'dev') {
+    AWS.config = new AWS.Config();
+    AWS.config.update({region:'eu-west-1'});
+} else {
+    //aws credentials
+    AWS.config.loadFromPath('~/.aws/credentials.json');
+}
+
+
 
 
 // DB
