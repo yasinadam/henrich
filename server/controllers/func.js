@@ -142,23 +142,46 @@ func.updateRecord = function(model, selector, dataObj, callback) {
 }
 
 func.deleteProjectImageFolder = function(projectInfo, utils, callback) {
-    utils.rimraf(__dirname+'../../../public/uploads/images/'+projectInfo.userID+'/'+projectInfo.projectID, function(err) {
+    var s3 = new utils.AWS.S3();
+    var params = {
+        Bucket: 'henrich-app',
+        Key: 'uploads/images/'+projectInfo.userID+'/'+projectInfo.projectID
+    };
+    s3.listObjects(params, function(err, data) {
+        if(err){
+            callback(err, err.stack);
+        } else {
+            var params2 = {
+                Bucket: 'STRING_VALUE',
+                Delete: {
+                    Objects: data
+                }
+            };
+            s3.deleteObjects(params2, function(err, data) {
+              if (err) console.log(err, err.stack); // an error occurred
+              else     console.log(data);           // successful response
+            });
+        }
+    });
+
+    /*utils.rimraf(__dirname+'../../../public/uploads/images/'+projectInfo.userID+'/'+projectInfo.projectID, function(err) {
         if(err) {console.log(err);}
         callback(true);
-    })
+    })*/
 }
 
-func.deleteImage = function(imgPostArr, fs, callback) {
-    var img = __dirname+'../../../public/uploads/images/'+imgPostArr.userID+'/'+imgPostArr.projectID+'/'+imgPostArr.imgName;
-    fs.stat(img, function (err, stats) {
-        console.log(stats);//here we got all information of file in stats variable
-        if(err) {
-            console.error(err);
-        }
-        fs.unlink(img,function(err){
-            if(err) return console.log(err);
+func.deleteImage = function(imgPostArr, utils, callback) {
+    var s3 = new utils.AWS.S3();
+    var params = {
+        Bucket: 'henrich-app',
+        Key: imgPostArr.imgName.Key
+    };
+    s3.deleteObject(params, function(err, data) {
+        if(err){
+            callback(err, err.stack);
+        } else {
             callback(true);
-        });
+        }
     });
 }
 

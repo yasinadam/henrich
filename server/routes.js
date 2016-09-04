@@ -152,9 +152,9 @@ module.exports = function(app, utils, models) {
 	})
 
 	app.post('/api/project/delete-image', function(req, res) {
-		func.deleteImage(req.body, utils.fs, function(deleteStatus) {
+		func.deleteImage(req.body, utils, function(deleteStatus) {
 			console.log(deleteStatus);
-			if(deleteStatus == true) {
+			if(deleteStatus) {
 				func.sendInfo(res, true, {message: 'Deleted Image'});
 			}
 		})

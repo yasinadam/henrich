@@ -153,7 +153,7 @@ app.controller('AccountEditProjectCtrl', function($scope, $http, $location, auth
     }
     $scope.updateProject = function() {
         project.updateProject($scope.gotProjectInfo, $scope.files, function(resp) {
-            if(resp.success == true) {$location.path('/single').search('id', $scope.projectID);}
+            if(resp.success == true) {$location.path('/projects');}
         })
     }
     $scope.deleteImage = function(imgName) {
@@ -163,7 +163,7 @@ app.controller('AccountEditProjectCtrl', function($scope, $http, $location, auth
             userID: $scope.gotProjectInfo.userID
         };
         project.deleteImage(imgPostArr, function(resp) {
-            $("[data-img='"+imgPostArr.imgName+"']").remove();
+            $("[data-img='"+imgPostArr.imgName.Key+"']").remove();
         })
     }
 })
