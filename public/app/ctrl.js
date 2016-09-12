@@ -112,7 +112,6 @@ app.controller('AccountProjectsCtrl', function($scope, project) {
 app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, Upload) {
     $scope.localStorage = $localStorage;
     $scope.processedImgs = $localStorage.henrich.processedImgs;
-    $scope.processedImgs = $localStorage.henrich.processedImgs;
     $scope.watermarkImg = '';
     $scope.file = '';
 
@@ -217,7 +216,7 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
             var tempEl = $('.watermark-preview').clone()
             $('.watermark-preview').remove();
             //var img = $('<img class="watermark-preview">');
-            tempEl.attr('src', $localStorage.henrich.processedImgs[0].url);
+            tempEl.attr('src', $scope.processedImgs[0].url);
             tempEl.appendTo('#watermark-preview-div');
             $(tempEl).load(function() {
                 $('.watermark-preview').watermark($scope.wmOpts);
