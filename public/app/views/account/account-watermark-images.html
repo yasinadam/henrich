@@ -1,0 +1,155 @@
+<div navi></div>
+
+<div class="ui internally grid very padded">
+    <div class="row">
+        <div class="three wide column">
+            <div account-side-navi></div>
+        </div>
+        <div class="twelve wide column">
+            <div class="ui padded container segment">
+                <h2 class="ui header">Project Watermark Images
+                    <a href="/color-correction"><button class="ui right floated button">Color Correction<i class="reply right icon"></i></button></a>
+                </h2>
+
+                <div class="ui divider "></div>
+                <div class="ui hidden divider "></div>
+
+                <div class="row">
+
+                    <div class="ui two column grid">
+                      <div class="column">
+                        <div class="ui fluid card">
+                          <div id="watermark-preview-div" class="image">
+                            <img class="watermark-preview" src="{{localStorage.henrich.processedImgs[0].url}}">
+                          </div>
+                          <div class="content">
+                            <a class="header">Watermark Preview</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="column">
+                        <div class="ui fluid card">
+                          <div class="content">
+                            <a class="header">Watermark Options</a>
+                            <div class="ui divider "></div>
+                            <div class="ui hidden divider "></div>
+
+
+                            <ang-accordion one-at-a-time="true">
+                                <collapsible-item ng-click="previewFile()" item-title="Use Image as Watermark">
+                                    <div class="ui form">
+                                      <div class="two fields">
+                                          <div class="ui divider "></div>
+
+                                        <div class="field">
+                                          <form class="ui form">
+                                              <input id="watermarkInput" type="file" ng-model="file" ngf-select="previewFile()"><br>
+                                          </form>
+                                        </div>
+                                        <div class="field">
+                                            <div class="wmImgPrev tc">
+                                                <img id="watermarkPreview" src="" height="100" alt="">
+                                            </div>
+                                        </div>
+                                      </div>
+                                  </div>
+                                </collapsible-item>
+
+                                <div class="ui horizontal divider">
+                                  Or
+                                </div>
+
+                                <collapsible-item item-title="Use Text as Watermark" initially-open="true">
+                                    <div class="ui form">
+                                    <div class="three fields">
+                                      <div class="field">
+                                        <label>Watermark Text</label>
+                                        <input ng-model="wmOpts.text" ng-change="emptyPreviewImg()" type="text">
+                                      </div>
+                                      <div class="field">
+                                        <label>Text Size</label>
+                                        <input ng-model="wmOpts.textSize" ng-change="refreshWm()" type="text">
+                                      </div>
+                                      <div class="field">
+                                        <label>Text Box Width</label>
+                                        <input ng-model="wmOpts.textWidth" ng-change="refreshWm()" type="text">
+                                      </div>
+
+                                    </div>
+                                    <div class="two fields">
+                                        <div class="field">
+                                          <label>Text Color</label>
+                                          <color-picker ng-change="refreshWm()" event-api="eventApi" ng-click="colorPickClick()" class="color-picker" ng-model="wmOpts.textColor" options="pickerOpts"></color-picker>
+                                        </div>
+                                        <div class="field">
+                                          <label>Background Color</label>
+                                          <color-picker ng-change="refreshWm()" event-api="eventBgApi" ng-click="colorPickBgClick()" class="color-picker-bg" ng-model="wmOpts.textBg" options="pickerBgOpts"></color-picker>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                </collapsible-item>
+                            </ang-accordion>
+
+
+
+
+                              <div class="ui hidden divider "></div>
+                              <h4>Extra Options</h4>
+                              <div class="ui divider "></div>
+                              <div class="ui hidden divider "></div>
+
+                              <div class="form ui">
+                                  <div class="three fields">
+
+                                <div class="field">
+                                  <label>Margin</label>
+                                  <input ng-model="wmOpts.margin" ng-change="refreshWm()" type="text">
+                                </div>
+                                <div class="field">
+                                  <label>Opacity</label>
+                                  <input ng-model="wmOpts.opacity" ng-change="refreshWm()" type="text">
+                                </div>
+                                <div class="field tc">
+                                  <label class="tl">Placement</label>
+                                  <div class="ui medium icon buttons">
+                                      <button ng-click="gravityChange('nw')" class="ui button"><i class="arrow down icon flip-135"></i></button>
+                                      <button ng-click="gravityChange('n')" class="ui button"><i class="arrow down icon mirror-180"></i></button>
+                                      <button ng-click="gravityChange('ne')" class="ui button"><i class="arrow right icon flip-315"></i></button>
+                                  </div><br>
+                                  <div class="ui medium icon buttons">
+                                      <button ng-click="gravityChange('w')" class="ui button "><i class="arrow left icon"></i></button>
+                                      <button class="ui button basic"><i class="square outline icon"></i></button>
+                                      <button ng-click="gravityChange('e')" class="ui button"><i class="arrow right icon"></i></button>
+                                  </div><br>
+                                  <div class="ui medium icon buttons">
+                                      <button ng-click="gravityChange('sw')" class="ui button"><i class="arrow down icon flip-45"></i></button>
+                                      <button ng-click="gravityChange('s')" class="ui button"><i class="arrow down icon"></i></button>
+                                      <button ng-click="gravityChange('se')" class="ui button"><i class="arrow right icon flip-45"></i></button>
+                                  </div><br>
+                                </div>
+                              </div>
+                              </div>
+
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="ui divider "></div>
+                <div class="ui hidden divider "></div>
+
+                <div class="row tr">
+                    <div class="ui buttons">
+                        <a href="/project-image-watermarking"><button class="ui button">Skip</button></a>
+                        <div class="or"></div>
+                        <button ng-click="saveColorCorrection()" class="ui positive button">Apply To All Images</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

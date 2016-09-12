@@ -49,6 +49,18 @@ app.config(function($routeProvider, $locationProvider, $httpProvider) {
         type        : 'protected'
     })
 
+    .when('/watermark-images', {
+        templateUrl : viewDir+'account/account-watermark-images.html',
+        controller  : 'AccountAddWatermark',
+        type        : 'protected'
+    })
+
+    .when('/color-correction', {
+        templateUrl : viewDir+'account/account-add-project-color-view.html',
+        controller  : 'AccountEditProjectColorCtrl',
+        type        : 'protected'
+    })
+
     .when('/edit-project', {
         templateUrl : viewDir+'account/account-edit-project-view.html',
         controller  : 'AccountEditProjectCtrl',
@@ -64,6 +76,7 @@ app.config(function($routeProvider, $locationProvider, $httpProvider) {
 });
 
 app.run(function($http, $localStorage, $log, $location, details, $rootScope) {
+    if($localStorage.henrich == undefined) {$localStorage.henrich = {};}
     $('body').hide();
     $rootScope.$on('$routeChangeSuccess', function (e, current, pre) {
         var type = current.$$route.type;

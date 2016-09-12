@@ -7,14 +7,14 @@
         </div>
         <div class="twelve wide column">
             <div class="ui padded container segment">
-                <h2 ng-click="test()" class="ui header">Add Project
+                <h2 class="ui header">Add Project
                     <a href="/projects"><button class="ui right floated button">Project List<i class="reply right icon"></i></button></a>
                     <button ng-if="editButton == true" ng-click="editButtonState(); saveProfileData()" class="ui primary right floated button">Save</button>
                 </h2>
 
                 <div class="ui divider "></div>
                 <div class="ui hidden divider "></div>
-                
+
                 <form class="ui form">
                     <div class="field">
                         <label>Project Name</label>
@@ -25,12 +25,12 @@
                         <textarea ng-model="projectInfo.projectDesc" rows="3"></textarea>
                     </div>
 
-
                       Select Images <input multiple ngf-select="" ng-model="files" name="file" ngf-accept="'image/*'" type="file">
 
 
-                    <button class="ui button" ng-click="addProject()" type="submit">Add Project</button>
+                    <button class="ui button" ng-click="nextColor(files)" type="submit">Start Image Processing</button>
                 </form>
+
 
                 <div class="ui hidden divider"></div>
 

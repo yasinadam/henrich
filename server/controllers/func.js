@@ -166,11 +166,7 @@ func.deleteProjectImageFolder = function(projectInfo, utils, callback) {
           });
         }
     });
-
-    /*utils.rimraf(__dirname+'../../../public/uploads/images/'+projectInfo.userID+'/'+projectInfo.projectID, function(err) {
-        if(err) {console.log(err);}
-        callback(true);
-    })*/
+    
 }
 
 func.deleteImage = function(imgPostArr, utils, callback) {
