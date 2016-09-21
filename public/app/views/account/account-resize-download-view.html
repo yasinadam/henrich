@@ -1,0 +1,163 @@
+<div navi></div>
+
+<div class="ui internally grid very padded">
+    <div class="row">
+        <div class="three wide column">
+            <div account-side-navi></div>
+        </div>
+        <div class="twelve wide column">
+            <div class="ui padded container segment">
+                <h2 class="ui header">Resize & Download
+                    <a href="/watermark-images"><button class="ui right floated button">Watermark Images<i class="reply right icon"></i></button></a>
+                </h2>
+
+                <div class="ui divider "></div>
+                <div class="ui hidden divider "></div>
+
+                <div class="row">
+
+                    <div class="ui grid">
+                      <div class="eleven wide column">
+                          <div class="ui link cards">
+                            <div class="card" ng-repeat="img in watermarkSavedImg">
+                              <div class="image">
+                                  <img id="resize-{{$index}}" src="{{img.src}}">
+                              </div>
+                              <div class="content">
+                                  <div class="description">
+                                    Filename: <b>{{filenameArr[$index]}}</b>
+                                    <div class="ui hidden divider "></div>
+                                    <a href="{{img.src}}" download="{{filenameArr[$index]}}">
+                                        <button class="ui mini right floated button">
+                                          <i class="cloud download icon"></i>
+                                          Download
+                                        </button>
+                                    </a>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="five wide column">
+                          <div class="ui fluid card">
+                            <div class="content">
+                              <a class="header" ng-click="test()">Resize & Download Options</a>
+                              <div class="ui divider "></div>
+                              <div class="ui hidden divider "></div>
+
+                                <div class="form ui">
+                                    <div class="ui segment">
+                                        <div class="grouped fields">
+                                        <label>Choose a Resize Option</label>
+                                        <div class="field">
+                                          <div class="ui radio checkbox size-checkbox-noresize">
+                                            <input name="example2" checked="checked" type="radio">
+                                            <label>No Resize</label>
+                                          </div>
+                                        </div>
+                                        <div class="field">
+                                          <div class="ui radio checkbox size-checkbox-small">
+                                            <input name="example2" type="radio">
+                                            <label>Small (50% Smaller)</label>
+                                          </div>
+                                        </div>
+                                        <div class="field">
+                                          <div class="ui radio checkbox size-checkbox-medium">
+                                            <input name="example2" type="radio">
+                                            <label>Medium (25% Smaller)</label>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="ui segment">
+                                      <div class="field">
+                                        <div id="filename-switch" class="ui toggle checkbox">
+                                          <input class="hidden" ng-model="filenameCheckbox" tabindex="0" name="gift" type="checkbox">
+                                          <label >Use original filenames</label>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div class="ui segment">
+                                      <div class="field">
+                                          <button ng-click="downloadZip()" class="ui positive button">Zip & Download Images</button>
+                                      </div>
+                                    </div>
+                                </div>
+                              </div>
+                            </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="ui divider "></div>
+                <div class="ui hidden divider "></div>
+
+                <!--<div class="row tr">
+                    <div class="ui buttons">
+                        <a href="/project-image-watermarking"><button class="ui button">Skip</button></a>
+                        <div class="or"></div>
+                        <button ng-click="saveWatermark()" class="ui positive button">Apply To All Images</button>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <div navi></div>
+
+<div class="ui internally grid very padded">
+    <div class="row">
+        <div class="three wide column">
+            <div account-side-navi></div>
+        </div>
+        <div class="twelve wide column">
+            <div class="ui padded container segment">
+                <h2 class="ui header">Resize & Download
+                    <a href="/watermark-images"><button class="ui right floated button">Watermarking<i class="reply right icon"></i></button></a>
+                </h2>
+
+                <div class="ui divider "></div>
+                <div class="ui hidden divider "></div>
+
+                <div class="row">
+                    <div class="ui link cards">
+                      <div class="card" ng-repeat="img in watermarkSavedImg">
+                        <div class="image">
+                            <img src="{{img.src}}">
+                        </div>
+                        <div class="content">
+                            <div class="description">
+                              Filename: <b>{{projectInfo.projectName}}-{{$index+1}}</b>
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                </div>
+
+                <div class="ui divider "></div>
+                <div class="ui hidden divider "></div>
+
+                <div class="row tr">
+                    <div class="ui buttons">
+                        <a href="/project-image-watermarking"><button class="ui button">Skip</button></a>
+                        <div class="or"></div>
+                        <button ng-click="saveColorCorrection()" class="ui positive button">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

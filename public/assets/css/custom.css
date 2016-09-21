@@ -13,6 +13,7 @@ canvas {
     padding-right: 25px !important;
 }
 .hide {display:none;}
+.of-auto {overflow: auto;}
 
 
 .no-bord {border: none !important;}
@@ -24,7 +25,7 @@ canvas {
     padding-top: 100px;
 }
 
-#logo {padding: 4px 0 0 20px;}
+#logo {padding: 0 0 0 20px;}
 
 #login-column {
     padding-top: 50px;
@@ -51,3 +52,13 @@ canvas {
 }
 
 .color-picker-wrapper .color-picker-panel {position: relative !important;}
+
+.big-img {
+    position: absolute !important;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 200% !important;
+    z-index: 10000;
+}

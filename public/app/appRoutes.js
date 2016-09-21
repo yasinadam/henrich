@@ -61,6 +61,12 @@ app.config(function($routeProvider, $locationProvider, $httpProvider) {
         type        : 'protected'
     })
 
+    .when('/resize-download', {
+        templateUrl : viewDir+'account/account-resize-download-view.html',
+        controller  : 'AccountResizeDownloadCtrl',
+        type        : 'protected'
+    })
+
     .when('/edit-project', {
         templateUrl : viewDir+'account/account-edit-project-view.html',
         controller  : 'AccountEditProjectCtrl',

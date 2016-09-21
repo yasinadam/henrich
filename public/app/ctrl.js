@@ -109,10 +109,12 @@ app.controller('AccountProjectsCtrl', function($scope, project) {
 
 })
 
-app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, Upload) {
+app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, Upload, $location) {
     $scope.localStorage = $localStorage;
     $scope.processedImgs = $localStorage.henrich.processedImgs;
     $scope.watermarkImg = '';
+    $scope.savedWatermarkImg = [];
+    $scope.savedWatermarkImgTemp = [];
     $scope.file = '';
 
     console.log($scope.processedImgs);
@@ -129,7 +131,10 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
             opacity: 0.8,
             textBg: 'rgb(60, 56, 56)',
             textColor: 'rgb(255, 255, 255)',
-            gravity: 'se'
+            gravity: 'se',
+            done: function (imgURL) {
+                console.log(imgURL);
+            }
         };
     }
 
@@ -183,10 +188,10 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
 
     $timeout(function(){
         $scope.cp1 = $('.color-picker div.color-picker-wrapper div.color-picker-panel.color-picker-panel-bottom.color-picker-panel-left.color-picker-show-hue.color-picker-show-alpha.ng-hide').toggle();
-    },500)
+    },3000)
     $timeout(function(){
         $scope.cp2 = $('.color-picker-bg div.color-picker-wrapper div.color-picker-panel.color-picker-panel-bottom.color-picker-panel-left.color-picker-show-hue.color-picker-show-alpha.ng-hide').toggle();
-    },500)
+    },3000)
 
     $scope.pickerOpts = {
         format: 'rgb',
@@ -203,7 +208,9 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
         $scope.refreshWm();
     }
 
-    $('.watermark-preview').watermark($scope.wmOpts);
+    $timeout(function(){
+        $('.watermark-preview').watermark($scope.wmOpts);
+    },2000)
 
     $('.watermark-preview').load(function() {
         $scope.refreshWm();
@@ -222,7 +229,207 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
                 $('.watermark-preview').watermark($scope.wmOpts);
             });
       }, 500);
+    }
 
+    $scope.saveWatermark = function() {
+        for(key in $scope.processedImgs) {
+            var img = $('<img class="dynamic-wm">');
+            img.attr('src', $scope.processedImgs[key].url);
+            img.watermark($scope.wmOpts);
+            var temp = img.get();
+            $scope.savedWatermarkImgTemp.push({
+                key: key,
+                src: temp
+            });
+        }
+        $timeout(function() {
+            $scope.$apply(function() {
+                for(key in $scope.savedWatermarkImgTemp) {
+                    $scope.savedWatermarkImg.push({
+                        key: key,
+                        src: $($scope.savedWatermarkImgTemp[key].src).attr('src')
+                    });
+                }
+                $scope.localStorage.henrich.watermarkSavedImg = $scope.savedWatermarkImg;
+                $location.path('/resize-download');
+            });
+        }, 1000);
+
+
+
+
+    }
+})
+
+app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localStorage, uploadedImages, $timeout) {
+    $scope.localStorage = $localStorage;
+    $scope.watermarkSavedImg = $scope.localStorage.henrich.watermarkSavedImg;
+    $scope.projectInfo = $scope.localStorage.henrich.projectInfo;
+    $scope.preImages = $scope.localStorage.henrich.preImages;
+    $scope.filenameCheckbox = false;
+    $scope.filenameArr = [];
+    $scope.resizeType = 'none';
+    $scope.resizedImages = [];
+
+    $scope.originalFilenameSwitch = function() {
+        for(key in $scope.watermarkSavedImg) {
+            $scope.filenameArr[key] = $scope.preImages[key].name;
+        }
+    }
+    $scope.newFilenameSwitch = function() {
+        for(key in $scope.watermarkSavedImg) {
+            var tempType = $scope.preImages[key].type;
+            if(tempType.indexOf('jpeg') !== -1) {
+                var ext = 'jpg';
+            }
+            if(tempType.indexOf('png') !== -1) {
+                var ext = 'png';
+            }
+            $scope.filenameArr[key] = $scope.projectInfo.projectName+'-'+(parseInt(key)+parseInt(1))+'.'+ext;
+        }
+    }
+
+    $scope.newFilenameSwitch();
+
+    $('#filename-switch').checkbox({
+        onChecked: function() {
+            $scope.filenameCheckbox = true;
+            $scope.originalFilenameSwitch();
+            $('a.header').click();
+        },
+        onUnchecked: function() {
+            $scope.filenameCheckbox = false;
+            $scope.newFilenameSwitch();
+            $('a.header').click();
+        }
+    });
+
+    $('.size-checkbox-noresize').checkbox({
+        onChecked: function() {
+            $scope.resizeType = 'none';
+        },
+    });
+    $('.size-checkbox-small').checkbox({
+        onChecked: function() {
+            $scope.resizeType = 'small';
+        },
+    });
+    $('.size-checkbox-medium').checkbox({
+        onChecked: function() {
+            $scope.resizeType = 'medium';
+        },
+    });
+
+    $scope.resizeImg = function(imgData, key, desiredWidth, ratioInput, callback) {
+        var imgTemp = document.getElementById("resize-"+key);
+
+        // calculate how much to scale the resulting image
+        //var originalWidth=imgTemp.width;
+        //var originalHeight=imgTemp.height;
+        //var desiredWidth=desiredWidth;
+        //var scalingFactor = desiredWidth/originalWidth;
+
+        // scale the original size proportionally
+        //var newWidth=originalWidth*scalingFactor;
+        //var newHeight=originalHeight*scalingFactor;
+
+        // We create an image to receive the Data URI
+        var img = new Image();
+
+        // When the event "onload" is triggered we can resize the image.
+        img.onload = function() {
+
+            var canvas = document.createElement('canvas');
+            var ctx = canvas.getContext('2d');
+
+            var bigside = Math.max(img.width, img.height);
+            var ratio =  ratioInput;
+            canvas.width = img.width * ratio;
+            canvas.height = img.height* ratio;
+            ctx.scale(ratio, ratio); // scale by 1/4
+            ctx.drawImage(img, 0, 0);
+
+            // We create a canvas and get its context.
+            //var canvas = document.createElement('canvas');
+            /*var canvas = document.getElementById("can-man");
+            var ctx = canvas.getContext('2d');
+
+            // resize the canvas to fit the desired image
+            // Note: canvas is a reference to your html canvas element
+            canvas.width = 100%;
+            canvas.height = 100%;
+
+            // Draw the image to the canvas
+            // This version of drawImage allows you to scale the original image
+            // while you are drawing it to the canvas.
+            ctx.drawImage(
+                img,
+                0,0,originalWidth,originalHeight,
+                0,0,newWidth,newHeight);*/
+
+            var dataURI = canvas.toDataURL();
+
+            callback(key, dataURI);
+            /////////////////////////////////////////
+            // Use and treat your Data URI here !! //
+            /////////////////////////////////////////
+        };
+
+        // We put the Data URI in the image's src attribute
+        img.src = imgData;
+        //console.log(img);
+    }
+
+    $scope.addToZip = function(zip, key, tempSrcArr) {
+        zip.file($scope.filenameArr[key], tempSrcArr[key].src.split(",")[1], {base64: true});
+        console.log((parseInt(key) + parseInt(1))+' - '+$scope.filenameArr.length);
+        if( (parseInt(key) + parseInt(1)) == $scope.filenameArr.length) {
+            zip.generateAsync({type:"blob"}).then(function(blob) {
+                saveAs(blob, $scope.projectInfo.projectName+'-images'+'.zip');
+            });
+        }
+    }
+
+    $scope.downloadZip = function() {
+        var zip = new JSZip();
+        if($scope.resizeType == 'none') {
+            for(key in $scope.watermarkSavedImg) {
+                var tempSrcArr = $scope.watermarkSavedImg[key].src.split(",");
+                zip.file($scope.filenameArr[key], tempSrcArr[1], {base64: true});
+            }
+            zip.generateAsync({type:"blob"}).then(function(blob) {
+                saveAs(blob, $scope.projectInfo.projectName+'-images'+'.zip');
+            });
+        }
+        if($scope.resizeType == 'small') {
+            for(key in $scope.watermarkSavedImg) {
+                var tempSrcArr = $scope.watermarkSavedImg[key].src;
+                $scope.resizeImg(tempSrcArr, key, 900, 0.50, function(key, dataURI) {
+                    $scope.resizedImages.push({
+                        key: key,
+                        src: dataURI
+                    })
+                    $scope.addToZip(zip, key, $scope.resizedImages);
+                });
+            }
+        }
+        if($scope.resizeType == 'medium') {
+            for(key in $scope.watermarkSavedImg) {
+                var tempSrcArr = $scope.watermarkSavedImg[key].src;
+                $scope.resizeImg(tempSrcArr, key, 900, 0.25, function(key, dataURI) {
+                    $scope.resizedImages.push({
+                        key: key,
+                        src: dataURI
+                    })
+                    $scope.addToZip(zip, key, $scope.resizedImages);
+                });
+            }
+        }
+
+    }
+
+    $scope.test = function() {
+        //console.log($scope.filenameCheckbox);
     }
 })
 
@@ -230,6 +437,7 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
     $scope.colorValues = [];
     $localStorage.henrich.processedImgs = [];
     $scope.localStorage = $localStorage;
+    $scope.canmanArr = [];
     console.log($scope.localStorage.henrich.preImages);
 
     if($localStorage.henrich.projectInfo !== undefined) {
@@ -237,18 +445,55 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
     }
 
     for (key in $scope.localStorage.henrich.preImages) {
-        $scope.colorValues.push({key: key, maxContrast: 0, maxBrightness: 0, maxSharpness: 0});
+        $scope.colorValues.push({
+            key: key,
+            maxContrast: 0,
+            maxBrightness: 0,
+            maxSharpness: 0,
+            maxSaturation: 0
+        });
     }
 
+
+    $timeout(function(){   //Set timeout
+        for (key in $scope.localStorage.henrich.preImages) {
+            $scope.canmanArr.push({
+                key: key,
+                fn: Caman('#fab-can-'+key+'')
+            })
+        }
+    },500);
+
+
+
     $scope.changeColorValues = function(newval, type) {
-        Caman('#fab-can-'+newval.key+'', function() {
-            this.revert(updateContext = true);
-            this.contrast(newval.maxContrast);
-            this.brightness(newval.maxBrightness);
-            this.vibrance(newval.maxSharpness);
-            this.render();
-        })
+        $scope.canmanArr[newval.key].fn.revert(updateContext = true);
+        $scope.canmanArr[newval.key].fn.contrast(newval.maxContrast);
+        $scope.canmanArr[newval.key].fn.brightness(newval.maxBrightness);
+        $scope.canmanArr[newval.key].fn.vibrance(newval.maxSharpness);
+        $scope.canmanArr[newval.key].fn.saturation(newval.maxSaturation);
+        $scope.canmanArr[newval.key].fn.render();
     }
+
+    $scope.applyToAll = function(key) {
+        var contrast = $scope.colorValues[key].maxContrast;
+        var brightness = $scope.colorValues[key].maxBrightness;
+        var sharpness = $scope.colorValues[key].maxSharpness;
+        var saturation = $scope.colorValues[key].maxSaturation;
+        for (k in $scope.localStorage.henrich.preImages) {
+            $scope.colorValues[k].maxContrast = contrast;
+            $scope.colorValues[k].maxBrightness = brightness;
+            $scope.colorValues[k].maxSharpness = sharpness;
+            $scope.colorValues[k].maxSaturation = saturation;
+        }
+    }
+
+    $scope.bigImg = function(e) {
+        //console.log(e);
+        var tempEle = $(e.currentTarget);
+        $(tempEle).toggleClass('big-img');
+    }
+
 
     $scope.saveColorCorrection = function() {
         var storedImgs = $localStorage.henrich.preImages;
@@ -283,6 +528,9 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
                 if(newVal[i].maxSharpness !== oldVal[i].maxSharpness) {
                     $scope.changeColorValues(newVal[i]);
                 }
+                if(newVal[i].maxSaturation !== oldVal[i].maxSaturation) {
+                    $scope.changeColorValues(newVal[i]);
+                }
             }
         },100);
     }, true);
@@ -308,7 +556,8 @@ app.controller('AccountAddProjectCtrl', function($scope, $http, $location, $loca
         for(key in files) {
             $scope.localStorage.henrich.preImages.push({
                 name: files[key].name,
-                url: files[key].$ngfBlobUrl
+                url: files[key].$ngfBlobUrl,
+                type: files[key].type
             });
         }
         $location.path('/color-correction');
