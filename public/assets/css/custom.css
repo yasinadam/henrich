@@ -14,7 +14,7 @@ canvas {
 }
 .hide {display:none;}
 .of-auto {overflow: auto;}
-
+.ib {display: inline-block;}
 
 .no-bord {border: none !important;}
 
@@ -61,4 +61,41 @@ canvas {
     margin-right: auto;
     width: 200% !important;
     z-index: 10000;
+}
+
+.image > div.spin-div {
+    background: rgba(255, 255, 255, 0.7) none repeat scroll 0 0;
+    height: 100%;
+    position: absolute;
+    text-align: center;
+    vertical-align: text-bottom;
+    width: 100%;
+}
+
+.spin-div > img {
+    margin-top: 18%;
+}
+
+span.before-text {
+    background: #000 none repeat scroll 0 0;
+    color: #fff;
+    padding: 10px;
+    position: absolute;
+}
+
+span.after-text {
+    background: #000 none repeat scroll 0 0;
+    color: #fff;
+    padding: 10px;
+    position: absolute;
+    left: 0;
+}
+
+.drop-box {
+    background: #F8F8F8;
+    border: 5px dashed #DDD;
+    width: 170px;
+    text-align: center;
+    padding: 50px 10px;
+    margin-left: 10px;
 }

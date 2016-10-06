@@ -8,7 +8,7 @@
     <div class="twelve wide column">
         <div class="ui padded container segment">
             <h2 class="ui header">Projects
-                <a ng-href="/add-project"><button class="ui right floated button">Add Project<i class="plus right icon"></i></button></a>
+                <a ng-click="goToAddProject()"><button class="ui right floated button">Add Project<i class="plus right icon"></i></button></a>
                 <button ng-if="editButton == true" ng-click="editButtonState(); saveProfileData()" class="ui primary right floated button">Save</button>
             </h2>
             <div class="ui divider "></div>

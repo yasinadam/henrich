@@ -17,17 +17,24 @@
                 <div class="row">
                     <div class="ui link cards">
                       <div class="card" ng-repeat="img in localStorage.henrich.preImages">
-                        <div class="image" ng-click="bigImg($event)">
+                        <div class="image" data-key="{{$index}}" ng-click="bigImg($event)">
                             <img src="{{img.url}}" ng-click="bigImg($event)" id="fab-can-{{$index}}">
                         </div>
-                        <a class="ui basic label no-bord">Contrast</a>
-                        <div class="ui contrast-slider" id="contrast-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxContrast" pin-handle="min"></div>
+                        <!-- <a class="ui basic label no-bord">Contrast</a>
+                        <div class="ui contrast-slider" id="contrast-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxContrast" pin-handle="min"></div> -->
+                        <!-- <a class="ui basic label no-bord">Sharpness</a>
+                        <div class="ui sharpness-slider" id="sharpness-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxSharpness" pin-handle="min"></div> -->
+
                         <a class="ui basic label no-bord">Brightness</a>
                         <div class="ui brightness-slider" id="brightness-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxBrightness" pin-handle="min"></div>
+
+                        <a class="ui basic label no-bord">Vibrance</a>
+                        <div class="ui vibrance-slider" id="vibrance-{{$index}}" range-slider min="-100" max="100" model-max="colorValues[$index].maxVibrance" pin-handle="min"></div>
+
                         <a class="ui basic label no-bord">Sharpness</a>
-                        <div class="ui sharpness-slider" id="sharpness-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxSharpness" pin-handle="min"></div>
-                        <a class="ui basic label no-bord">Saturation</a>
                         <div class="ui saturation-slider" id="saturation-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxSaturation" pin-handle="min"></div>
+
+
                         <button ng-click="applyToAll($index)" class="mini ui button">Apply To All</button>
                       </div>
                     </div>
@@ -38,7 +45,7 @@
 
                 <div class="row tr">
                     <div class="ui buttons">
-                        <a href="/project-image-watermarking"><button class="ui button">Skip</button></a>
+                        <a href="/watermark-images"><button class="ui button">Skip</button></a>
                         <div class="or"></div>
                         <button ng-click="saveColorCorrection()" class="ui positive button">Save</button>
                     </div>

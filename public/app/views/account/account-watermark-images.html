@@ -7,20 +7,19 @@
         </div>
         <div class="twelve wide column">
             <div class="ui padded container segment">
-                <h2 class="ui header">Project Watermark Images
+                <h2 id="quick-refresh" ng-click="refreshWm()" class="ui header">Project Watermark Images
                     <a href="/color-correction"><button class="ui right floated button">Color Correction<i class="reply right icon"></i></button></a>
                 </h2>
 
                 <div class="ui divider "></div>
                 <div class="ui hidden divider "></div>
-
                 <div class="row">
 
                     <div class="ui two column grid">
                       <div class="column">
                         <div class="ui fluid card">
                           <div id="watermark-preview-div" class="image">
-                            <img class="watermark-preview" src="{{localStorage.henrich.processedImgs[0].url}}">
+                            <img id="watermark-preview" class="watermark-preview" src="{{localStorage.henrich.processedImgs[0].url}}">
                           </div>
                           <div class="content">
                             <a class="header">Watermark Preview</a>
@@ -64,7 +63,7 @@
                                     <div class="three fields">
                                       <div class="field">
                                         <label>Watermark Text</label>
-                                        <input ng-model="wmOpts.text" ng-change="emptyPreviewImg()" type="text">
+                                        <input ng-model="wmOpts.text" ng-change="emptyPreviewImg();refreshWm()" type="text">
                                       </div>
                                       <div class="field">
                                         <label>Text Size</label>
@@ -144,7 +143,7 @@
 
                 <div class="row tr">
                     <div class="ui buttons">
-                        <a href="/project-image-watermarking"><button class="ui button">Skip</button></a>
+                        <a href="/resize-download"><button class="ui button">Skip</button></a>
                         <div class="or"></div>
                         <button ng-click="saveWatermark()" class="ui positive button">Apply To All Images</button>
                     </div>
