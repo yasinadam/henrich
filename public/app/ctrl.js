@@ -223,16 +223,24 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
         $scope.projectInfo = $scope.localStorage.henrich.projectInfo;
     }
 
-    for (key in $scope.localStorage.henrich.preImages) {
-        $scope.colorValues.push({
-            key: key,
-            //maxContrast: 0,
-            maxBrightness: 0,
-            //maxSharpness: 0,
-            maxVibrance: 0,
-            maxSaturation: 0
-        });
+    $scope.setDefaultColor = function(cb) {
+        for (key in $scope.localStorage.henrich.preImages) {
+            $scope.colorValues.push({
+                key: key,
+                //maxContrast: 0,
+                maxBrightness: 0,
+                //maxSharpness: 0,
+                maxVibrance: 0,
+                maxSaturation: 0
+            });
+            if(parseInt(key)+1 == $scope.localStorage.henrich.preImages.length) {
+                if(cb) {
+                    cb();
+                }
+            }
+        }
     }
+    $scope.setDefaultColor();
 
     if($scope.localStorage.henrich) {
         if($scope.localStorage.henrich.colorValues) {
@@ -263,20 +271,22 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
                   $scope.changeColorValues($scope.colorValues[key]);
               }
           }
-        }, 100);
+      }, 100);
     }
 
     $(document).ready(function(){
-        for(key in $scope.localStorage.henrich.preImages) {
-            $scope.canmanArr.push({
-                key: key,
-                fn: Caman('#fab-can-'+key+'')
-            })
+        $timeout(function(){
+            for(key in $scope.localStorage.henrich.preImages) {
+                $scope.canmanArr.push({
+                    key: key,
+                    fn: Caman('#fab-can-'+key+'')
+                })
 
-            if(parseInt(key)+1 == $scope.localStorage.henrich.preImages.length) {
-                $scope.doRefresh();
+                if(parseInt(key)+1 == $scope.localStorage.henrich.preImages.length) {
+                    $scope.doRefresh();
+                }
             }
-        }
+        }, 1000);
     });
 
 
@@ -326,6 +336,25 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
 
     }
 
+    $scope.skipColorCorrection = function() {
+        $scope.setDefaultColor(function() {
+            $scope.localStorage.henrich.colorValues = undefined;
+            var storedImgs = $localStorage.henrich.preImages;
+
+            for(key in storedImgs) {
+                $localStorage.henrich.processedImgs.push({url: storedImgs[key].url});
+            }
+
+            $timeout(function(){   //Set timeout
+                //location.reload();
+                $location.path('/watermark-images');
+                //window.location.href = "/watermark-images";
+            },500);
+        });
+
+
+    }
+
 
     $scope.saveColorCorrection = function() {
         var storedImgs = $localStorage.henrich.preImages;
@@ -364,16 +393,16 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
                 /*if(newVal[i].maxContrast !== oldVal[i].maxContrast) {
                     $scope.changeColorValues(newVal[i]);
                 }*/
-                if(newVal[i].maxBrightness !== oldVal[i].maxBrightness) {
+                if(oldVal[i] !== undefined && newVal[i].maxBrightness !== oldVal[i].maxBrightness) {
                     $scope.changeColorValues(newVal[i]);
                 }
                 /*if(newVal[i].maxSharpness !== oldVal[i].maxSharpness) {
                     $scope.changeColorValues(newVal[i]);
                 }*/
-                if(newVal[i].maxVibrance !== oldVal[i].maxVibrance) {
+                if(oldVal[i] !== undefined && newVal[i].maxVibrance !== oldVal[i].maxVibrance) {
                     $scope.changeColorValues(newVal[i]);
                 }
-                if(newVal[i].maxSaturation !== oldVal[i].maxSaturation) {
+                if(oldVal[i] !== undefined && newVal[i].maxSaturation !== oldVal[i].maxSaturation) {
                     $scope.changeColorValues(newVal[i]);
                 }
             }
@@ -389,6 +418,18 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
     $scope.savedWatermarkImg = [];
     $scope.savedWatermarkImgTemp = [];
     $scope.file = '';
+
+    $scope.wmOptsBlank = {
+        path: '',
+        text: '',
+        textSize: 150,
+        textWidth: 1000,
+        margin: 2,
+        opacity: 0.8,
+        textBg: 'rgb(60, 56, 56)',
+        textColor: 'rgb(255, 255, 255)',
+        gravity: 'se'
+    }
 
     $scope.wmOpts = {
         path: '',
@@ -529,7 +570,34 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
       $scope.refreshWm();
   });*/
 
+  $scope.skipWatermark = function() {
+      $scope.localStorage.henrich.skipWatermark = true;
+      for(key in $scope.processedImgs) {
+          var img = $('<img class="dynamic-wm">');
+          img.attr('src', $scope.processedImgs[key].url);
+          img.watermark($scope.wmOptsBlank);
+          var temp = img.get();
+          $scope.savedWatermarkImgTemp.push({
+              key: key,
+              src: temp
+          });
+      }
+      $timeout(function() {
+          $scope.$apply(function() {
+              for(key in $scope.savedWatermarkImgTemp) {
+                  $scope.savedWatermarkImg.push({
+                      key: key,
+                      src: $($scope.savedWatermarkImgTemp[key].src).attr('src')
+                  });
+              }
+              $scope.localStorage.henrich.watermarkSavedImg = $scope.savedWatermarkImg;
+              $location.path('/resize-download');
+          });
+      }, 1000);
+  }
+
     $scope.saveWatermark = function() {
+        $scope.localStorage.henrich.skipWatermark = false;
         for(key in $scope.processedImgs) {
             var img = $('<img class="dynamic-wm">');
             img.attr('src', $scope.processedImgs[key].url);
@@ -564,6 +632,10 @@ app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localSt
     $scope.filenameArr = [];
     $scope.resizeType = 'none';
     $scope.resizedImages = [];
+
+    /*if($scope.localStorage.henrich.skipWatermark == true) {
+        $scope.watermarkSavedImg = $localStorage.henrich.preImages;
+    }*/
 
     $scope.originalFilenameSwitch = function() {
         for(key in $scope.watermarkSavedImg) {
