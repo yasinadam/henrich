@@ -25,15 +25,15 @@ module.exports = function(app, utils, models) {
 	});
 
 	app.post('/api/member/login', function(req, res) {
-		func.checkDuplicate(models.User, ['email', 'password'], [req.body.email, req.body.password], function(duplicateStatus) {
-			if(duplicateStatus == false) {
+		func.checkDuplicate(models.User, ['email', 'password'], [req.body.email, req.body.password], function(duplicate) {
+			if(duplicate.status == false) {
 				// there's an account match
 				var token = webtoken.jwt.sign(req.body.email, webtoken.jwtSecret);
-				func.sendInfo(res, duplicateStatus,
-					{data: token, errMessage: 'Account match!.'});
+				func.sendInfo(res, duplicate.status,
+					{data: {data: duplicate.data._id, token: token, errMessage: 'Account match!.'}});
 			} else {
 				// No duplicate in mongo so no account matches
-				func.sendInfo(res, duplicateStatus,
+				func.sendInfo(res, duplicate.status,
 					{message: 'Email does not exist. Signup today!'});
 			}
 		})
@@ -138,7 +138,28 @@ module.exports = function(app, utils, models) {
 		})
 	})
 
+	app.post('/api/project/save-project', function(req, res) {
+		func.addRecord(models.Project, req.body, function(status) {
+			if(status !== false) {
+				func.addImage(status, utils, function(resp) {
+					func.sendInfo(res, resp, {message: 'Image'});
+				})
+			}
+		})
+	})
 
+	/*app.post('/api/project/add-image', function(req, res) {
+		func.addRecord(req.body, function(status) {
+			if(status !== false) {
+				func.addImage(status, utils, function(resp) {
+					func.sendInfo(res, resp, {message: 'Updated'});
+				})
+			}
+		})
+		/*func.addRecord(models.Project, req.body, function(status) {
+			console.log(status);
+		})
+	})*/
 
 	app.post('/api/project/delete-project', function(req, res) {
 		func.deleteRecord(models.Project, '_id', req.body.projectID, function(deleteStatus) {

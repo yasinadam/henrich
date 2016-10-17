@@ -42,13 +42,12 @@ func.checkDuplicate = function(model, field, value, callback) {
     } else {
         query[field] = value;
     }
-
     model.findOne(query, function(err, duplicate) {
         if(err) {callback(err);}
         if(duplicate) {
-            callback(false);
+            callback({data: duplicate, status: false});
         } else {
-            callback(true);
+            callback({data: duplicate, status: true});
         }
     })
 }
@@ -60,7 +59,7 @@ func.addRecord = function(model, dataObj, callback) {
     }
     mod.save(function(err, user){
         if(err){
-            callback(err);
+            callback(false);
         } else {
             callback(user);
         }
@@ -94,11 +93,13 @@ func.getAllRecords = function(model, field, value, callback) {
 }
 
 func.getProjectImages = function(projectID, userID, utils, callback) {
+    console.log(projectID);
+    console.log(userID);
     var s3 = new utils.AWS.S3();
     //var dir = 'http://s3-eu-west-1.amazonaws.com/uploads/images/'+userID+'/'+projectID;
     var dir = 'henrich-app';
 
-    var params = { Bucket: dir, Prefix: 'uploads/images/'+userID+'/'+projectID+'/'};
+    var params = { Bucket: dir,  Prefix: 'uploads/images/'+userID+'/'+projectID+'/'};
     s3.listObjects(params, function(err, data) {
         if (err) console.log(err, err.stack); // an error occurred
         else     callback(data);         // successful response
@@ -166,7 +167,7 @@ func.deleteProjectImageFolder = function(projectInfo, utils, callback) {
           });
         }
     });
-    
+
 }
 
 func.deleteImage = function(imgPostArr, utils, callback) {
@@ -184,21 +185,25 @@ func.deleteImage = function(imgPostArr, utils, callback) {
     });
 }
 
-func.addImage = function(files, projectInfo, utils, callback) {
+func.addImage = function(data, utils, callback) {
+    //console.log(data);
     var s3 = new utils.AWS.S3();
 
-    for(var key in files) {
-        var bodystream = utils.fs.createReadStream(files[key][0].path);
-
+    for(key in data.postWatermarkBlobs) {
+        var obj = data.postWatermarkBlobs[key].obj.replace(/^data:image\/\w+;base64,/, "")
         var uploadDate = JSON.stringify(Math.round(new Date().getTime()/1000));
-        var targetPath = 'uploads/images/' + projectInfo.userID + '/' + projectInfo._id + '/' + uploadDate + '-' +  files[key][0].originalFilename;
-
+        var targetPath = 'uploads/images/' + data.userID + '/'+ data._id +'/' + uploadDate + '-' +  data.postWatermarkBlobs[key].name;
+        //var targetPath = 'uploads/images/' + projectInfo.userID + '/' + projectInfo._id + '/' + uploadDate + '-' +  files[key][0].originalFilename;
+        var buf = new Buffer(obj,'base64');
         var params = {
             Bucket: 'henrich-app',
             Key: targetPath,
-            Body: bodystream,
+            Body: buf,
+            ContentEncoding: 'base64',
+            ContentType: 'image/jpeg',
             ACL: 'public-read'
         };
+
         s3.upload(params, function(err, data) {
             console.log(err, data);
         });

@@ -16,8 +16,7 @@ if(process.env.NODE_ENV !== 'dev') {
     AWS.config.loadFromPath('~/.aws/credentials.json');
 }
 
-
-
+console.log(process.env.NODE_ENV);
 
 // DB
 var mongoose        = require('mongoose');
@@ -51,9 +50,9 @@ app.set('port', (process.env.PORT || 5002));
 app.use(express.static(__dirname + '/public'));
 
 // Need for Posting Data
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 // Get Server Side Main Index
 app.set('views', __dirname + '/views');

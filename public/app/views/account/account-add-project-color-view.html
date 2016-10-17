@@ -8,8 +8,9 @@
         <div class="twelve wide column">
             <div class="ui padded container segment">
                 <h2 class="ui header">Image Color Correction
-                    <a href="/add-project"><button class="ui right floated button">Add Project<i class="reply right icon"></i></button></a>
+                    <a ng-click="backToAddProject()"><button class="ui right floated button">Add Project<i class="reply right icon"></i></button></a>
                 </h2>
+
 
                 <div class="ui divider "></div>
                 <div class="ui hidden divider "></div>
@@ -17,22 +18,25 @@
                 <div class="row">
                     <div class="ui link cards">
                       <div class="card" ng-repeat="img in localStorage.henrich.preImages">
-                        <div class="image" data-key="{{$index}}" ng-click="bigImg($event)">
-                            <img src="{{img.url}}" ng-click="bigImg($event)" id="fab-can-{{$index}}">
+                        <div class="image color-image" data-key="{{img.originalKey}}" ng-click="bigImg($event)">
+                            <img src="{{img.url}}" id="fab-can-{{$index}}">
+                            <i ng-click="bigImg($event)" class="circular inverted search icon preview-icon"></i>
                         </div>
-                        <!-- <a class="ui basic label no-bord">Contrast</a>
-                        <div class="ui contrast-slider" id="contrast-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxContrast" pin-handle="min"></div> -->
-                        <!-- <a class="ui basic label no-bord">Sharpness</a>
-                        <div class="ui sharpness-slider" id="sharpness-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxSharpness" pin-handle="min"></div> -->
 
-                        <a class="ui basic label no-bord">Brightness</a>
-                        <div class="ui brightness-slider" id="brightness-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxBrightness" pin-handle="min"></div>
+                        <a class="ui basic label no-bord">Brightness
+                            <i title="Reset this slider." ng-click="resetSlider($index, 'brightness')" class="undo icon link right floated poppy"></i>
+                        </a>
+                        <div ng-click="changeColor('brightness', $index)" class="ui brightness-slider slide" id="brightness-{{$index}}" range-slider min="-100" max="100" model-max="colorValues[$index].maxBrightness" pin-handle="min" step="1"></div>
 
-                        <a class="ui basic label no-bord">Vibrance</a>
-                        <div class="ui vibrance-slider" id="vibrance-{{$index}}" range-slider min="-100" max="100" model-max="colorValues[$index].maxVibrance" pin-handle="min"></div>
+                        <a class="ui basic label no-bord">Vibrance
+                            <i title="Reset this slider." ng-click="resetSlider($index, 'vibrance')" class="undo icon link right floated poppy"></i>
+                        </a>
+                        <div ng-click="changeColor('vibrance', $index)" class="ui vibrance-slider slide" id="vibrance-{{$index}}" range-slider min="-100" max="100" model-max="colorValues[$index].maxVibrance" pin-handle="min"></div>
 
-                        <a class="ui basic label no-bord">Sharpness</a>
-                        <div class="ui saturation-slider" id="saturation-{{$index}}" range-slider min="-50" max="50" model-max="colorValues[$index].maxSaturation" pin-handle="min"></div>
+                        <a class="ui basic label no-bord">Sharpness
+                            <i title="Reset this slider." ng-click="resetSlider($index, 'sharpness')" class="undo icon link right floated poppy"></i>
+                        </a>
+                        <div ng-click="changeColor('sharpness', $index)" class="ui sharpness-slider slide" id="sharpness-{{$index}}" range-slider min="-100" max="100" model-max="colorValues[$index].maxSharpness" pin-handle="min"></div>
 
 
                         <button ng-click="applyToAll($index)" class="mini ui button">Apply To All</button>
@@ -57,3 +61,33 @@
 
 <div class="ui hidden divider"></div><div class="ui hidden divider"></div><div class="ui hidden divider"></div>
 <div foot></div>
+
+<div id="preview-img-modal" class="modal">
+
+
+    <div class="ui two column grid">
+      <div class="column">
+        <div class="ui fluid image">
+            <div class="ui blue ribbon label">Before</div>
+            <img class="ui image" src="{{beforeImgUrl}}">
+        </div>
+      </div>
+      <div class="column">
+        <div class="ui fluid image">
+          <div class="ui blue ribbon label">After</div>
+          <img class="ui image" src="{{afterImgUrl}}">
+        </div>
+      </div>
+    </div>
+
+
+
+    <!--<div class="preview-div">
+        <img class="before-img preview-img" src="{{beforeImgUrl}}">
+        <span class="preview-text">Before</span>
+    </div>
+    <div class="preview-div">
+        <img class="after-img preview-img" src="{{beforeImgUrl}}">
+        <span class="preview-text">After</span>
+    </div>-->
+</div>

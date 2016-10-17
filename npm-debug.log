@@ -1,0 +1,194 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files (x86)\\nodejs\\\\node.exe',
+1 verbose cli   'C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'install',
+1 verbose cli   'buffertools' ]
+2 info using npm@2.5.1
+3 info using node@v0.12.1
+4 verbose node symlink C:\Program Files (x86)\nodejs\\node.exe
+5 warn package.json menboot@0.1.4 No README data
+6 silly cache add args [ 'buffertools', null ]
+7 verbose cache add spec buffertools
+8 silly cache add parsed spec { raw: 'buffertools',
+8 silly cache add   scope: null,
+8 silly cache add   name: 'buffertools',
+8 silly cache add   rawSpec: '',
+8 silly cache add   spec: '*',
+8 silly cache add   type: 'range' }
+9 verbose addNamed buffertools@*
+10 silly addNamed semver.valid null
+11 silly addNamed semver.validRange *
+12 silly addNameRange { name: 'buffertools', range: '*', hasData: false }
+13 silly mapToRegistry name buffertools
+14 silly mapToRegistry using default registry
+15 silly mapToRegistry registry https://registry.npmjs.org/
+16 silly mapToRegistry uri https://registry.npmjs.org/buffertools
+17 verbose addNameRange registry:https://registry.npmjs.org/buffertools not in flight; fetching
+18 verbose request uri https://registry.npmjs.org/buffertools
+19 verbose request no auth needed
+20 info attempt registry request try #1 at 9:57:23 AM
+21 verbose request id 5c3d965da01fdcc7
+22 verbose etag "7A3XM081RG5ECFPRPHGOV5CBV"
+23 http request GET https://registry.npmjs.org/buffertools
+24 http 304 https://registry.npmjs.org/buffertools
+25 silly get cb [ 304,
+25 silly get   { date: 'Sat, 15 Oct 2016 08:57:24 GMT',
+25 silly get     via: '1.1 varnish',
+25 silly get     'cache-control': 'max-age=300',
+25 silly get     etag: '"7A3XM081RG5ECFPRPHGOV5CBV"',
+25 silly get     age: '292',
+25 silly get     connection: 'keep-alive',
+25 silly get     'x-served-by': 'cache-lcy1130-LCY',
+25 silly get     'x-cache': 'HIT',
+25 silly get     'x-cache-hits': '1',
+25 silly get     'x-timer': 'S1476521844.673023,VS0,VE0',
+25 silly get     vary: 'Accept-Encoding' } ]
+26 verbose etag https://registry.npmjs.org/buffertools from cache
+27 verbose get saving buffertools to C:\Users\admin\AppData\Roaming\npm-cache\registry.npmjs.org\buffertools\.cache.json
+28 silly addNameRange number 2 { name: 'buffertools', range: '*', hasData: true }
+29 silly addNameRange versions [ 'buffertools',
+29 silly addNameRange   [ '1.0.0',
+29 silly addNameRange     '1.0.1',
+29 silly addNameRange     '1.0.2',
+29 silly addNameRange     '1.0.3',
+29 silly addNameRange     '1.0.4',
+29 silly addNameRange     '1.0.5',
+29 silly addNameRange     '1.0.6',
+29 silly addNameRange     '1.0.7',
+29 silly addNameRange     '1.0.8',
+29 silly addNameRange     '1.0.9',
+29 silly addNameRange     '1.1.0',
+29 silly addNameRange     '1.1.1',
+29 silly addNameRange     '2.0.0',
+29 silly addNameRange     '2.0.1',
+29 silly addNameRange     '2.1.0',
+29 silly addNameRange     '2.1.1',
+29 silly addNameRange     '2.1.2',
+29 silly addNameRange     '2.1.3',
+29 silly addNameRange     '2.1.4' ] ]
+30 verbose addNamed buffertools@2.1.4
+31 silly addNamed semver.valid 2.1.4
+32 silly addNamed semver.validRange 2.1.4
+33 silly cache afterAdd buffertools@2.1.4
+34 verbose afterAdd C:\Users\admin\AppData\Roaming\npm-cache\buffertools\2.1.4\package\package.json not in flight; writing
+35 verbose afterAdd C:\Users\admin\AppData\Roaming\npm-cache\buffertools\2.1.4\package\package.json written
+36 silly install resolved [ { name: 'buffertools',
+36 silly install resolved     main: 'buffertools',
+36 silly install resolved     version: '2.1.4',
+36 silly install resolved     keywords: [ 'buffer', 'buffers' ],
+36 silly install resolved     description: 'Working with node.js buffers made easy.',
+36 silly install resolved     homepage: 'https://github.com/bnoordhuis/node-buffertools',
+36 silly install resolved     author:
+36 silly install resolved      { name: 'Ben Noordhuis',
+36 silly install resolved        email: 'info@bnoordhuis.nl',
+36 silly install resolved        url: 'http://bnoordhuis.nl/' },
+36 silly install resolved     repository:
+36 silly install resolved      { type: 'git',
+36 silly install resolved        url: 'git+https://github.com/bnoordhuis/node-buffertools.git' },
+36 silly install resolved     engines: { node: '>=0.3.0' },
+36 silly install resolved     scripts: { test: 'node test.js', install: 'node-gyp rebuild' },
+36 silly install resolved     license: 'ISC',
+36 silly install resolved     gypfile: true,
+36 silly install resolved     contributors: [ [Object], [Object], [Object], [Object], [Object] ],
+36 silly install resolved     gitHead: 'aeefb999fa9a501bc18db06bead38e1e1578d857',
+36 silly install resolved     bugs: { url: 'https://github.com/bnoordhuis/node-buffertools/issues' },
+36 silly install resolved     _id: 'buffertools@2.1.4',
+36 silly install resolved     _shasum: '62d4e1584c0090a0c7d3587f25934a84b8b38de4',
+36 silly install resolved     _from: 'buffertools@*',
+36 silly install resolved     _npmVersion: '3.8.6',
+36 silly install resolved     _nodeVersion: '7.0.0-pre',
+36 silly install resolved     _npmUser: { name: 'bnoordhuis', email: 'info@bnoordhuis.nl' },
+36 silly install resolved     maintainers: [ [Object] ],
+36 silly install resolved     dist:
+36 silly install resolved      { shasum: '62d4e1584c0090a0c7d3587f25934a84b8b38de4',
+36 silly install resolved        tarball: 'https://registry.npmjs.org/buffertools/-/buffertools-2.1.4.tgz' },
+36 silly install resolved     _npmOperationalInternal:
+36 silly install resolved      { host: 'packages-16-east.internal.npmjs.com',
+36 silly install resolved        tmp: 'tmp/buffertools-2.1.4.tgz_1461962655891_0.08781413664110005' },
+36 silly install resolved     directories: {},
+36 silly install resolved     _resolved: 'https://registry.npmjs.org/buffertools/-/buffertools-2.1.4.tgz',
+36 silly install resolved     readme: 'ERROR: No README data found!' } ]
+37 info install buffertools@2.1.4 into C:\Users\admin\Desktop\free\henrich\image-app\henrich
+38 info installOne buffertools@2.1.4
+39 verbose installOne of buffertools to C:\Users\admin\Desktop\free\henrich\image-app\henrich not in flight; installing
+40 verbose lock using C:\Users\admin\AppData\Roaming\npm-cache\_locks\buffertools-e234102d8e3f9c1e.lock for C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+41 silly install write writing buffertools 2.1.4 to C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+42 silly cache addNamed cb buffertools@2.1.4
+43 verbose unbuild node_modules\buffertools
+44 verbose gentlyRm vacuuming C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+45 verbose tar unpack C:\Users\admin\AppData\Roaming\npm-cache\buffertools\2.1.4\package.tgz
+46 verbose tar unpacking to C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+47 verbose gentlyRm vacuuming C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+48 silly gunzTarPerm modes [ '777', '666' ]
+49 silly gunzTarPerm extractEntry package.json
+50 silly gunzTarPerm modified mode [ 'package.json', 436, 438 ]
+51 silly gunzTarPerm extractEntry .npmignore
+52 silly gunzTarPerm modified mode [ '.npmignore', 436, 438 ]
+53 silly gunzTarPerm extractEntry README.md
+54 silly gunzTarPerm modified mode [ 'README.md', 436, 438 ]
+55 silly gunzTarPerm extractEntry LICENSE
+56 silly gunzTarPerm modified mode [ 'LICENSE', 436, 438 ]
+57 silly gunzTarPerm extractEntry buffertools.js
+58 silly gunzTarPerm modified mode [ 'buffertools.js', 436, 438 ]
+59 silly gunzTarPerm extractEntry test.js
+60 silly gunzTarPerm modified mode [ 'test.js', 436, 438 ]
+61 silly gunzTarPerm extractEntry binding.gyp
+62 silly gunzTarPerm modified mode [ 'binding.gyp', 436, 438 ]
+63 silly gunzTarPerm extractEntry buffertools.cc
+64 silly gunzTarPerm modified mode [ 'buffertools.cc', 436, 438 ]
+65 silly gunzTarPerm extractEntry BoyerMoore.h
+66 silly gunzTarPerm modified mode [ 'BoyerMoore.h', 436, 438 ]
+67 silly gunzTarPerm extractEntry AUTHORS
+68 silly gunzTarPerm modified mode [ 'AUTHORS', 436, 438 ]
+69 silly gunzTarPerm extractEntry .mailmap
+70 silly gunzTarPerm modified mode [ '.mailmap', 436, 438 ]
+71 info preinstall buffertools@2.1.4
+72 silly install resolved []
+73 verbose about to build C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+74 info build C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+75 verbose linkStuff [ false,
+75 verbose linkStuff   false,
+75 verbose linkStuff   false,
+75 verbose linkStuff   'C:\\Users\\admin\\Desktop\\free\\henrich\\image-app\\henrich\\node_modules' ]
+76 info linkStuff buffertools@2.1.4
+77 verbose linkBins buffertools@2.1.4
+78 verbose linkMans buffertools@2.1.4
+79 verbose rebuildBundles buffertools@2.1.4
+80 info install buffertools@2.1.4
+81 verbose unsafe-perm in lifecycle true
+82 info buffertools@2.1.4 Failed to exec install script
+83 verbose unlock done using C:\Users\admin\AppData\Roaming\npm-cache\_locks\buffertools-e234102d8e3f9c1e.lock for C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+84 verbose stack Error: buffertools@2.1.4 install: `node-gyp rebuild`
+84 verbose stack Exit status 1
+84 verbose stack     at EventEmitter.<anonymous> (C:\Program Files (x86)\nodejs\node_modules\npm\lib\utils\lifecycle.js:213:16)
+84 verbose stack     at EventEmitter.emit (events.js:110:17)
+84 verbose stack     at ChildProcess.<anonymous> (C:\Program Files (x86)\nodejs\node_modules\npm\lib\utils\spawn.js:14:12)
+84 verbose stack     at ChildProcess.emit (events.js:110:17)
+84 verbose stack     at maybeClose (child_process.js:1008:16)
+84 verbose stack     at Process.ChildProcess._handle.onexit (child_process.js:1080:5)
+85 verbose pkgid buffertools@2.1.4
+86 verbose cwd C:\Users\admin\Desktop\free\henrich\image-app\henrich
+87 error Windows_NT 6.2.9200
+88 error argv "C:\\Program Files (x86)\\nodejs\\\\node.exe" "C:\\Program Files (x86)\\nodejs\\node_modules\\npm\\bin\\npm-cli.js" "install" "buffertools"
+89 error node v0.12.1
+90 error npm  v2.5.1
+91 error code ELIFECYCLE
+92 error buffertools@2.1.4 install: `node-gyp rebuild`
+92 error Exit status 1
+93 error Failed at the buffertools@2.1.4 install script 'node-gyp rebuild'.
+93 error This is most likely a problem with the buffertools package,
+93 error not with npm itself.
+93 error Tell the author that this fails on your system:
+93 error     node-gyp rebuild
+93 error You can get their info via:
+93 error     npm owner ls buffertools
+93 error There is likely additional logging output above.
+94 verbose exit [ 1, true ]
+95 verbose unbuild node_modules\buffertools
+96 info preuninstall buffertools@2.1.4
+97 info uninstall buffertools@2.1.4
+98 verbose unbuild rmStuff buffertools@2.1.4 from C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules
+99 info postuninstall buffertools@2.1.4
+100 verbose gentlyRm vacuuming C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+101 silly gentlyRm purging C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules\buffertools
+102 silly gentlyRm quitting because other entries in C:\Users\admin\Desktop\free\henrich\image-app\henrich\node_modules

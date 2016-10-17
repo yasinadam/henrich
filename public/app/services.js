@@ -55,8 +55,10 @@ app.service('member', function($localStorage, $location, $http, auth, details, a
     member.login = function(loginData) {
         $('#login-container').addClass('loading');
         $http.post('/api/member/login', loginData).then(function(response) {
+            //console.log(response.data.data);
             if(response.data.success == false) {
-                auth.saveStorageField('token', response.data.data, function(resp) {
+                $localStorage.henrich.userID = response.data.data.data;
+                auth.saveStorageField('token', response.data.data.token, function(resp) {
                     $location.path('/account');
                     details.loggedIn = true;
                 })
@@ -93,7 +95,7 @@ app.service('member', function($localStorage, $location, $http, auth, details, a
     return member;
 })
 
-app.service('project', function($http, auth, Upload, $location) {
+app.service('project', function($http, auth, Upload, $location, $localStorage) {
     var project = {};
 
     project.getProject = function(projectID, callback) {
@@ -164,6 +166,26 @@ app.service('project', function($http, auth, Upload, $location) {
         })
     }
 
+    project.saveProject = function(callback) {
+        var data = {};
+        data.name = $localStorage.henrich.projectInfo.projectName;
+        data.desc = $localStorage.henrich.projectInfo.projectDesc;
+        data.userID = $localStorage.henrich.userID;
+        data.originalImages;
+        //data.processedImgs;
+        data.colorValues = $localStorage.henrich.colorValues;
+        data.watermarkSavedOpts = $localStorage.henrich.watermarkSavedOpts;
+        data.postWatermarkBlobs = $localStorage.henrich.postWatermarkBlobs;
+        $http.post('/api/project/save-project', data).then(function(response) {
+            //console.log(response);
+            if(response.data.success == true) {
+                callback(response);
+            } else {
+                // error
+            }
+        })
+    }
+
     return project;
 })
 
@@ -182,12 +204,12 @@ app.service('auth', function($window, $location, $http, $localStorage) {
     auth.checkToken = function(token, callback) {
         $http.post('/api/member/check-token', {data: token}).then(function(res) {
             if(res.status == true) {
-                console.log('is veri');
+                //console.log('is veri');
             }
             callback(res);
         })
         .catch(function(res) {
-            console.error('error', res.status, res.data);
+            //console.error('error', res.status, res.data);
         })
         .finally(function() {
             //callback(res);
@@ -231,6 +253,44 @@ app.service('func', function() {
     func.toggle = function(value, callback) {
         value = value === false ? true: false;
         callback(value);
+    }
+
+    func.b64toBlob = function(dataURI, cb) {
+        /*var img = new Image();
+
+        img.onerror = onerror;
+
+        img.onload = function onload() {
+            var canvas = document.createElement('canvas');
+            canvas.width = img.width;
+            canvas.height = img.height;
+
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(onsuccess);
+        };
+        img.src = b64;*/
+        // convert base64 to raw binary data held in a string
+        // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+        // convert base64 to raw binary data held in a string
+        // doesn't handle URLEncoded DataURIs - see SO answer #6850276 for code that does this
+        var byteString = atob(dataURI.split(',')[1]);
+
+        // separate out the mime component
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+        // write the bytes of the string to an ArrayBuffer
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+
+        // write the ArrayBuffer to a blob, and you're done
+        var bb = new Blob([ab], {type: 'image/jpeg'});
+        cb(bb);
+
     }
 
     return func;

@@ -99,3 +99,36 @@ span.after-text {
     padding: 50px 10px;
     margin-left: 10px;
 }
+
+
+ .preview-img {
+     display: inline-block;
+     width: 49%;
+ }
+
+ #preview-img-modal {
+     max-width: 75%;
+ }
+
+ .preview-div {
+     position: relative;
+ }
+
+ .preview-text {
+     position: absolute;
+     left: 0;
+     top: 0;
+     background: #000;
+     color: #fff;
+     padding: 5px 10px;
+ }
+
+ .ui.blue.ribbon.label {
+     z-index: 100;
+ }
+
+ .preview-icon {
+     position: absolute;
+     left: 5px;
+    top: 5px;
+ }

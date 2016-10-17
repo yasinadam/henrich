@@ -118,7 +118,7 @@
                 ctx = canvas.getContext('2d'),
 
                 w = set.textWidth,
-                h = parseInt(set.textSize)+8;
+                h = parseInt(set.textSize)+50;
 
             canvas.width = w;
             canvas.height = h;

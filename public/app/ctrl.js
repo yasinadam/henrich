@@ -37,7 +37,7 @@ app.controller('MemberCtrl', function($scope, $http, $location, auth, member, al
     $scope.authenticate = function() {
         auth.getToken(function(token) {
             auth.checkToken(token, function(status) {
-                console.log(status);
+                //console.log(status);
             })
         })
     }
@@ -45,10 +45,9 @@ app.controller('MemberCtrl', function($scope, $http, $location, auth, member, al
 
 app.controller('AccountSideNaviCtrl', function($scope, $location) {
     $scope.currentView = $location.path();
-
 })
 
-app.controller('AccountProfileCtrl', function($scope, $http, member, user, func) {
+app.controller('AccountProfileCtrl', function($scope, $http, member, user, func, $localStorage) {
     $scope.user = user;
     $scope.editButton = false;
 
@@ -68,12 +67,10 @@ app.controller('AccountProfileCtrl', function($scope, $http, member, user, func)
 
     $scope.saveProfileData = function() {
         member.saveProfileData(function(response) {
-            console.log(response);
+            //console.log(response);
         })
     }
-
     $scope.getProfileData();
-
 })
 
 app.controller('AccountSingleCtrl', function($scope, $location, $http, project) {
@@ -81,30 +78,37 @@ app.controller('AccountSingleCtrl', function($scope, $location, $http, project) 
         $scope.gotProjectInfo = '';
         $scope.projectID = $location.search().id;
         project.getProject($scope.projectID, function(response) {
-            console.log(response);
             $scope.gotProjectInfo = response.data.info;
             $scope.gotProjectImages = response.data.images.Contents;
-            console.log($scope.gotProjectImages);
         })
     }
 })
 
-app.controller('AccountProjectsCtrl', function($scope, project, $location) {
+app.controller('AccountProjectsCtrl', function($scope, project, $location, $localStorage) {
     $scope.projects = '';
     project.getAllUserProjects(function(resp) {
         $scope.projects = resp;
     })
 
     $scope.goToAddProject = function() {
+        delete $localStorage.henrich.projectInfo;
+        delete $localStorage.henrich.colorValues;
+        delete $localStorage.henrich.preImages;
+        delete $localStorage.henrich.processedImgs;
+        delete $localStorage.henrich.skipWatermark;
+        delete $localStorage.henrich.watermarkSavedImg;
+        delete $localStorage.henrich.watermarkSavedOpts;
+        delete $localStorage.henrich.postWatermarkBlobs;
         $location.path('/add-project');
     }
 
     $scope.deleteProject = function(projectID, userID) {
         var projectInfo = {projectID: projectID, userID: userID};
-        console.log(projectInfo);
+        $('#'+projectID+'').remove();
+        //console.log(projectInfo);
         project.deleteProject(projectInfo, function(resp) {
             //$scope.projects = resp;
-            console.log(resp);
+            //console.log(resp);
             if(resp == true) {
                 $('#'+projectID+'').remove();
             }
@@ -112,7 +116,7 @@ app.controller('AccountProjectsCtrl', function($scope, project, $location) {
     }
 })
 
-app.controller('AccountAddProjectCtrl', function($scope, $http, $location, $localStorage, auth, Upload, uploadedImages, user, project, $timeout) {
+app.controller('AccountAddProjectCtrl', function($scope, $http, $location, $localStorage, auth, Upload, uploadedImages, user, project) {
     $scope.user = user;
     $scope.uploadedImages = uploadedImages;
     $scope.projectInfo = {};
@@ -122,9 +126,6 @@ app.controller('AccountAddProjectCtrl', function($scope, $http, $location, $loca
     $scope.canvasList = [];
 
     // delete saved project info
-    $scope.localStorage.henrich.projectInfo = undefined;
-    $scope.localStorage.henrich.colorValues = undefined;
-    $scope.localStorage.henrich.watermarkSavedOpts = undefined;
 
     if($localStorage.henrich.projectInfo !== undefined) {
         $scope.projectInfo = $scope.localStorage.henrich.projectInfo;
@@ -134,7 +135,7 @@ app.controller('AccountAddProjectCtrl', function($scope, $http, $location, $loca
     if (files != null) {
       // make files array for not multiple to be able to be used in ng-repeat in the ui
       if (!angular.isArray(files)) {
-        $timeout(function () {
+        setTimeout(function () {
           $scope.files = files;
         });
         return;
@@ -151,14 +152,15 @@ app.controller('AccountAddProjectCtrl', function($scope, $http, $location, $loca
             $scope.localStorage.henrich.preImages.push({
                 name: files[key].name,
                 url: files[key].$ngfBlobUrl,
-                type: files[key].type
+                type: files[key].type,
+                originalKey: key
             });
         }
         $location.path('/color-correction');
     }
 
     $scope.addProject = function() {
-        console.log($scope.files);
+        //console.log($scope.files);
         $scope.uploadInProgress = true;
         $scope.uploadProgress = 0;
         $scope.uploadedImages = {};
@@ -212,26 +214,44 @@ app.controller('AccountEditProjectCtrl', function($scope, $http, $location, auth
     }
 })
 
-app.controller('AccountEditProjectColorCtrl', function($scope, $location, $localStorage, uploadedImages, $timeout, $route) {
+app.controller('AccountEditProjectColorCtrl', function($scope, $location, $localStorage, uploadedImages, $route) {
     $scope.colorValues = [];
     $localStorage.henrich.processedImgs = [];
     $scope.localStorage = $localStorage;
+    delete $scope.canmanArr;
+    //delete Caman;
     $scope.canmanArr = [];
-    console.log($scope.localStorage.henrich.preImages);
+    $scope.maxHeight = 0;
+    //console.log($scope.localStorage.henrich.preImages);
+
+    $scope.backToAddProject = function() {
+        delete $localStorage.henrich.projectInfo;
+        delete $localStorage.henrich.colorValues;
+        delete $localStorage.henrich.preImages;
+        delete $localStorage.henrich.processedImgs;
+        delete $localStorage.henrich.skipWatermark;
+        delete $localStorage.henrich.watermarkSavedImg;
+        delete $localStorage.henrich.watermarkSavedOpts;
+        delete $localStorage.henrich.postWatermarkBlobs;
+        $location.path('/add-project');
+    }
 
     if($localStorage.henrich.projectInfo !== undefined) {
         $scope.projectInfo = $scope.localStorage.henrich.projectInfo;
     }
 
+    /*Caman.Filter.register("sharpen", function(F){
+        if(F==null){F=100}F/=100;
+        return this.processKernel("Sharpen",[0,-F,0,-F,4*F+1,-F,0,-F,0])
+    });*/
+
     $scope.setDefaultColor = function(cb) {
         for (key in $scope.localStorage.henrich.preImages) {
             $scope.colorValues.push({
                 key: key,
-                //maxContrast: 0,
                 maxBrightness: 0,
-                //maxSharpness: 0,
+                maxSharpness: 0,
                 maxVibrance: 0,
-                maxSaturation: 0
             });
             if(parseInt(key)+1 == $scope.localStorage.henrich.preImages.length) {
                 if(cb) {
@@ -249,17 +269,40 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
     }
 
     $scope.changeColorValues = function(newval, type) {
+        //console.log(newval.key);
         $('#fab-can-'+newval.key+'').before('<div id="spin-'+newval.key+'" class="spin-div"><img src="/assets/img/35.gif"></div>');
-        $scope.canmanArr[newval.key].fn.revert(updateContext = true);
-        //$scope.canmanArr[newval.key].fn.contrast(newval.maxContrast);
-        $scope.canmanArr[newval.key].fn.brightness(newval.maxBrightness);
-        //$scope.canmanArr[newval.key].fn.sharpen(newval.maxSharpness);
-        $scope.canmanArr[newval.key].fn.vibrance(newval.maxVibrance);
-        $scope.canmanArr[newval.key].fn.saturation(newval.maxSaturation);
-        $scope.canmanArr[newval.key].fn.render(function() {
-            $('.spin-div').remove();
-            $scope.localStorage.henrich.colorValues = $scope.colorValues;
-        });
+        var timeout;
+        timeout = setTimeout(function(){   //Set timeout
+            /*if($scope.maxHeight > 0) {
+                if($('#fab-can-'+key+'').height() > $scope.maxHeight) {
+                    $scope.maxHeight = $('#fab-can-'+key+'').height();
+                }
+            } else {
+                $scope.maxHeight = $('#fab-can-'+key+'').height();
+            }
+            var cardHeight = $('.card ').height();
+            var diff = cardHeight - $scope.maxHeight;*/
+
+            //$scope.canmanArr[newval.key].fn.reset();
+            $scope.canmanArr[newval.key].fn.revert(updateContext = true);
+            if(type.indexOf("brightness") > -1) {
+                $scope.canmanArr[newval.key].fn.brightness(newval.maxBrightness);
+            }
+            if(type.indexOf("sharpness") > -1) {
+                $scope.canmanArr[newval.key].fn.sharpen(newval.maxSharpness);
+            }
+            if(type.indexOf("vibrance") > -1) {
+                $scope.canmanArr[newval.key].fn.vibrance(newval.maxVibrance);
+            }
+
+
+            $scope.canmanArr[newval.key].fn.render(function() {
+                $scope.localStorage.henrich.colorValues = $scope.colorValues;
+                $scope.saveProcessedImgs($scope.localStorage.henrich.preImages, function(resp) {});
+                $('.spin-div').remove();
+            });
+            window.clearTimeout(timeout);
+        },500);
     }
 
     $scope.doRefresh = function() {
@@ -268,14 +311,27 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
            if($('canvas').length == $scope.localStorage.henrich.preImages.length) {
               clearInterval(checkExist);
               for (key in $scope.localStorage.henrich.preImages) {
-                  $scope.changeColorValues($scope.colorValues[key]);
+                  $scope.changeColorValues($scope.colorValues[key], ['brightness','vibrance','sharpness']);
               }
           }
       }, 100);
     }
 
+    $scope.resetSlider = function(key, type) {
+        //console.log('in');
+        //console.log($scope.colorValues[key]);
+
+        if(type == 'brightness') {$scope.colorValues[key].maxBrightness = 0;}
+        if(type == 'vibrance') {$scope.colorValues[key].maxVibrance = 0;}
+        if(type == 'sharpness') {$scope.colorValues[key].maxSharpness = 0;}
+        $scope.changeColorValues($scope.colorValues[key], type);
+    }
+
+
+
     $(document).ready(function(){
-        $timeout(function(){
+        var timeout;
+        timeout = setTimeout(function(){
             for(key in $scope.localStorage.henrich.preImages) {
                 $scope.canmanArr.push({
                     key: key,
@@ -283,135 +339,119 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
                 })
 
                 if(parseInt(key)+1 == $scope.localStorage.henrich.preImages.length) {
-                    $scope.doRefresh();
+                    if($scope.localStorage.henrich.colorValues !== undefined && $scope.localStorage.henrich.colorValues.length > 0) {
+                        $scope.doRefresh();
+                    }
+
                 }
             }
+            window.clearTimeout(timeout);
         }, 1000);
     });
 
 
-
-    /*$timeout(function(){   //Set timeout
-        for (key in $scope.localStorage.henrich.preImages) {
-            $scope.canmanArr.push({
-                key: key,
-                fn: Caman('#fab-can-'+key+'')
-            })
-            //$scope.changeColorValues($scope.colorValues[key]);
-        }
-    },500);*/
-
     $scope.applyToAll = function(key) {
-        //var contrast = $scope.colorValues[key].maxContrast;
         var brightness = $scope.colorValues[key].maxBrightness;
         var vibrance = $scope.colorValues[key].maxVibrance;
-        //var sharpness = $scope.colorValues[key].maxSharpness;
-        var saturation = $scope.colorValues[key].maxSaturation;
+        var sharpness = $scope.colorValues[key].maxSharpness;
         for (k in $scope.localStorage.henrich.preImages) {
-            //$scope.colorValues[k].maxContrast = contrast;
-            $scope.colorValues[k].maxBrightness = brightness;
-            $scope.colorValues[k].maxVibrance = vibrance;
-            //$scope.colorValues[k].maxSharpness = sharpness;
-            $scope.colorValues[k].maxSaturation = saturation;
+            if(parseInt(k) !== parseInt(key)) {
+                $scope.colorValues[k].maxBrightness = brightness;
+                $scope.colorValues[k].maxVibrance = vibrance;
+                $scope.colorValues[k].maxSharpness = sharpness;
+                $scope.changeColorValues($scope.colorValues[k], ['brightness','vibrance','sharpness']);
+            }
         }
     }
+
+    $.modal.AFTER_CLOSE
+    $(document).on($.modal.AFTER_CLOSE, function(event, modal) {
+      //console.log($route);
+    });
 
     $scope.bigImg = function(e) {
-        //console.log(e);
-        $('.before-img').remove();
-        var tempEle = $(e.currentTarget);
-        if($(tempEle).hasClass('big-img')) {
-            $('.before-img').remove();
-            $('.before-text').remove();
-            $('.after-text').remove();
-        } else {
-            var key = $(e.currentTarget).attr('data-key');
-            var beforeImgUrl = $localStorage.henrich.preImages[key].url;
-            $(tempEle).prepend('<img class="before-img" src="'+beforeImgUrl+'">');
-            $(tempEle).prepend('<span class="before-text">Before</span>');
-            $('#fab-can-'+key+'').after('<span class="after-text">After</span>');
+        $scope.afterImgUrl = '';
+        var key = $(e.currentTarget).attr('data-key');
+        $('#fab-can-'+key+'').before('<div id="spin-'+key+'" class="spin-div"><img src="/assets/img/35.gif"></div>');
+        if($localStorage.henrich.preImages[key] !== undefined) {
+            $scope.beforeImgUrl = $localStorage.henrich.preImages[key].url;
+            var canvas = document.getElementById('fab-can-'+key+'');
+            canvas.toBlob(function(blob) {
+                url = URL.createObjectURL(blob);
+                $scope.afterImgUrl = url;
+                $scope.$apply();
+                $('#preview-img-modal').modal();
+                $('.spin-div').remove();
+            });
         }
-
-        $(tempEle).toggleClass('big-img');
 
     }
 
-    $scope.skipColorCorrection = function() {
-        $scope.setDefaultColor(function() {
-            $scope.localStorage.henrich.colorValues = undefined;
-            var storedImgs = $localStorage.henrich.preImages;
 
+    $scope.skipColorCorrection = function() {
+        delete $localStorage.henrich.colorValues;
+        $scope.setDefaultColor(function() {
+            var storedImgs = $localStorage.henrich.preImages;
+            $localStorage.henrich.processedImgs = [];
             for(key in storedImgs) {
                 $localStorage.henrich.processedImgs.push({url: storedImgs[key].url});
+                if(parseInt(key)+1 == storedImgs.length) {
+                    $location.path('/watermark-images');
+                }
             }
-
-            $timeout(function(){   //Set timeout
-                //location.reload();
+            /*$timeout(function(){   //Set timeout
                 $location.path('/watermark-images');
-                //window.location.href = "/watermark-images";
-            },500);
+            },500);*/
         });
 
 
     }
 
+    $scope.saveProcessedImgs = function(storedImgs, cb) {
+        $localStorage.henrich.processedImgs = [];
+        for(key in storedImgs) {
+            var originKey = $('#fab-can-'+key+'').parent().attr('data-key');
+            var canvas = document.getElementById('fab-can-'+key+'');
+            canvas.toBlob(function(blob) {
+                url = URL.createObjectURL(blob);
+                //console.log(url);
+                $localStorage.henrich.processedImgs.push({url: url, originalKey: originKey});
+                if(parseInt(key)+1 == storedImgs.length) {
+                    var timeout;
+                    timeout = setTimeout(function() {
+                        window.clearTimeout(timeout);
+                        cb($localStorage.henrich.processedImgs);
+                    },1000)
+                }
+            });
+            /* else {
+                $localStorage.henrich.processedImgs.push({url: storedImgs[key].url, originalKey: originKey});
+            }*/
+            //if(cb) {
+                if(parseInt(key)+1 == storedImgs.length) {
+                    cb($localStorage.henrich.processedImgs);
+                }
+            //}
+        }
+    }
 
     $scope.saveColorCorrection = function() {
         var storedImgs = $localStorage.henrich.preImages;
 
-        for(key in storedImgs) {
-            if($('#fab-can-'+key+'')[0]['tagName'] == 'CANVAS') {
-                var canvas = document.getElementById('fab-can-'+key+'');
-                canvas.toBlob(function(blob) {
-                    url = URL.createObjectURL(blob);
-                    $localStorage.henrich.processedImgs.push({url: url});
-                });
-            } else {
-                $localStorage.henrich.processedImgs.push({url: storedImgs[key].url});
-            }
-        }
-        $timeout(function(){   //Set timeout
-            //location.reload();
-            $location.path('/watermark-images');
-            //window.location.href = "/watermark-images";
-        },500);
-
+        $scope.saveProcessedImgs(storedImgs, function(resp) {
+                //setTimeout(function(){   //Set timeout
+                    $location.path('/watermark-images');
+                //},1000);
+        })
     }
 
-    /*$timeout(function(){   //Set timeout
-        for (key in $scope.localStorage.henrich.preImages) {
-            $scope.changeColorValues($scope.colorValues[key]);
-        }
-    },700);*/
-
-    var timeoutPromise;
-    $scope.$watch('colorValues', function(newVal, oldVal) {
-        $timeout.cancel(timeoutPromise);
-        timeoutPromise = $timeout(function(){   //Set timeout
-            var i = newVal.length;
-            while(i--) {
-                /*if(newVal[i].maxContrast !== oldVal[i].maxContrast) {
-                    $scope.changeColorValues(newVal[i]);
-                }*/
-                if(oldVal[i] !== undefined && newVal[i].maxBrightness !== oldVal[i].maxBrightness) {
-                    $scope.changeColorValues(newVal[i]);
-                }
-                /*if(newVal[i].maxSharpness !== oldVal[i].maxSharpness) {
-                    $scope.changeColorValues(newVal[i]);
-                }*/
-                if(oldVal[i] !== undefined && newVal[i].maxVibrance !== oldVal[i].maxVibrance) {
-                    $scope.changeColorValues(newVal[i]);
-                }
-                if(oldVal[i] !== undefined && newVal[i].maxSaturation !== oldVal[i].maxSaturation) {
-                    $scope.changeColorValues(newVal[i]);
-                }
-            }
-        },100);
-    }, true);
+    $scope.changeColor = function(type, key) {
+        $scope.changeColorValues($scope.colorValues[key], type);
+    }
 
 })
 
-app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, Upload, $location, $route) {
+app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $location, $route, $timeout) {
     $scope.localStorage = $localStorage;
     $scope.processedImgs = $localStorage.henrich.processedImgs;
     $scope.watermarkImg = '';
@@ -421,11 +461,11 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
 
     $scope.wmOptsBlank = {
         path: '',
-        text: '',
+        text: 'w',
         textSize: 150,
         textWidth: 1000,
         margin: 2,
-        opacity: 0.8,
+        opacity: 0.000001,
         textBg: 'rgb(60, 56, 56)',
         textColor: 'rgb(255, 255, 255)',
         gravity: 'se'
@@ -442,7 +482,7 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
         textColor: 'rgb(255, 255, 255)',
         gravity: 'se',
         always: function () {
-            console.log('imgURL');
+            //console.log('imgURL');
         }
     };
 
@@ -451,10 +491,11 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
     }
 
     $scope.refreshWm = function() {
-        //setTimeout(function(){
-            console.log('refreshed');
-            $scope.localStorage.henrich.watermarkSavedOpts = $scope.wmOpts;
-            console.log($scope.wmOpts);
+        var timeout;
+        timeout = setTimeout(function(){
+            //console.log('refreshed');
+            $localStorage.henrich.watermarkSavedOpts = $scope.wmOpts;
+            //console.log($scope.wmOpts);
             var tempEl = $('.watermark-preview').clone();
             $('.watermark-preview').remove();
             //var img = $('<img class="watermark-preview">');
@@ -463,15 +504,20 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
             $(tempEl).load(function() {
                 $('.watermark-preview').watermark($scope.wmOpts);
             });
-      //}, 1000);
+            window.clearTimeout(timeout);
+      }, 1000);
   }
 
 
-    $('.watermark-preview').load(function() {
-        //$timeout(function(){
-            $('.watermark-preview').watermark($scope.wmOpts);
-        //},2000)
-    });
+    //$('.watermark-preview').load(function() {
+        var timeout1;
+        timeout1 = setTimeout(function(){
+            //console.log('wm');
+            $scope.refreshWm();
+            window.clearTimeout(timeout1);
+        },2000)
+
+    //});
 
     $scope.previewFile = function() {
         $scope.wmOpts.text = '';
@@ -480,7 +526,7 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
         var reader  = new FileReader();
 
         reader.addEventListener("load", function () {
-            console.log(reader);
+            //console.log(reader);
             preview.src = reader.result;
             $scope.wmOpts.path = preview.src;
             $scope.refreshWm();
@@ -523,11 +569,17 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
         $($scope.cp2).toggle();
     }
 
-    $timeout(function(){
+    var timeout2;
+    timeout2 = setTimeout(function(){
         $scope.cp1 = $('.color-picker div.color-picker-wrapper div.color-picker-panel.color-picker-panel-bottom.color-picker-panel-left.color-picker-show-hue.color-picker-show-alpha.ng-hide').toggle();
+        window.clearTimeout(timeout2);
+
     },3000)
-    $timeout(function(){
+
+    var timeout3
+    timeout3 = setTimeout(function(){
         $scope.cp2 = $('.color-picker-bg div.color-picker-wrapper div.color-picker-panel.color-picker-panel-bottom.color-picker-panel-left.color-picker-show-hue.color-picker-show-alpha.ng-hide').toggle();
+        window.clearTimeout(timeout3);
     },3000)
 
     $scope.pickerOpts = {
@@ -566,12 +618,42 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
       }, 2000);
   }*/
 
-  /*$('.watermark-preview').load(function() {
+  $('.watermark-preview').load(function() {
       $scope.refreshWm();
-  });*/
+  });
 
   $scope.skipWatermark = function() {
-      $scope.localStorage.henrich.skipWatermark = true;
+      delete $localStorage.henrich.watermarkSavedOpts;
+
+      $localStorage.henrich.watermarkSavedOpts = $scope.wmOpts;
+      $scope.localStorage.henrich.skipWatermark = false;
+      for(key in $scope.localStorage.henrich.processedImgs) {
+          var img = $('<img class="dynamic-wm">');
+          img.attr('src', $scope.localStorage.henrich.processedImgs[key].url);
+          img.watermark($scope.wmOptsBlank);
+          var temp = img.get();
+          $scope.savedWatermarkImgTemp.push({
+              key: key,
+              src: temp
+          });
+          if(parseInt(key)+1 == $scope.localStorage.henrich.processedImgs.length) {
+              var timeout;
+              timeout = $timeout(function() {
+                  for(key in $scope.savedWatermarkImgTemp) {
+                      $scope.savedWatermarkImg.push({
+                          key: key,
+                          src: $($scope.savedWatermarkImgTemp[key].src).attr('src')
+                      });
+                      if(parseInt(key)+1 == $scope.savedWatermarkImgTemp.length) {
+                          $scope.localStorage.henrich.watermarkSavedImg = $scope.savedWatermarkImg;
+                          $location.path('/resize-download');
+                      }
+                  }
+                  $timeout.cancel(timeout);
+              },1000);
+          }
+
+      /*$scope.localStorage.henrich.skipWatermark = true;
       for(key in $scope.processedImgs) {
           var img = $('<img class="dynamic-wm">');
           img.attr('src', $scope.processedImgs[key].url);
@@ -581,34 +663,71 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
               key: key,
               src: temp
           });
-      }
-      $timeout(function() {
-          $scope.$apply(function() {
+          if(parseInt(key)+1 == $scope.processedImgs.length) {
               for(key in $scope.savedWatermarkImgTemp) {
                   $scope.savedWatermarkImg.push({
                       key: key,
                       src: $($scope.savedWatermarkImgTemp[key].src).attr('src')
                   });
+                  if(parseInt(key)+1 == $scope.savedWatermarkImgTemp.length) {
+                      $scope.localStorage.henrich.watermarkSavedImg = $scope.savedWatermarkImg;
+                      $location.path('/resize-download');
+                  }
               }
-              $scope.localStorage.henrich.watermarkSavedImg = $scope.savedWatermarkImg;
-              $location.path('/resize-download');
+
+          }*/
+      }
+     /* $timeout(function() {
+          $scope.$apply(function() {
+
           });
-      }, 1000);
+      }, 1000);*/
   }
 
     $scope.saveWatermark = function() {
+        $localStorage.henrich.watermarkSavedOpts = $scope.wmOpts;
         $scope.localStorage.henrich.skipWatermark = false;
-        for(key in $scope.processedImgs) {
+        for(key in $scope.localStorage.henrich.processedImgs) {
             var img = $('<img class="dynamic-wm">');
-            img.attr('src', $scope.processedImgs[key].url);
+            img.attr('src', $scope.localStorage.henrich.processedImgs[key].url);
             img.watermark($scope.wmOpts);
             var temp = img.get();
             $scope.savedWatermarkImgTemp.push({
                 key: key,
                 src: temp
             });
+            if(parseInt(key)+1 == $scope.localStorage.henrich.processedImgs.length) {
+                var timeout;
+                timeout = $timeout(function() {
+                    for(key in $scope.savedWatermarkImgTemp) {
+                        $scope.savedWatermarkImg.push({
+                            key: key,
+                            src: $($scope.savedWatermarkImgTemp[key].src).attr('src')
+                        });
+                        if(parseInt(key)+1 == $scope.savedWatermarkImgTemp.length) {
+                            $scope.localStorage.henrich.watermarkSavedImg = $scope.savedWatermarkImg;
+                            $location.path('/resize-download');
+                        }
+                    }
+                    $timeout.cancel(timeout);
+                },1000);
+            }
         }
-        $timeout(function() {
+            /*if(parseInt(key)+1 == $scope.localStorage.henrich.processedImgs.length) {
+                for(key in $scope.savedWatermarkImgTemp) {
+                    $scope.savedWatermarkImg.push({
+                        key: key,
+                        src: $($scope.savedWatermarkImgTemp[key].src).attr('src')
+                    });
+                    if(parseInt(key)+1 == $scope.savedWatermarkImgTemp.length) {
+                        $scope.localStorage.henrich.watermarkSavedImg = $scope.savedWatermarkImg;
+                        $location.path('/resize-download');
+                    }
+                }
+
+            }*/
+
+        /*$timeout(function() {
             $scope.$apply(function() {
                 for(key in $scope.savedWatermarkImgTemp) {
                     $scope.savedWatermarkImg.push({
@@ -619,11 +738,11 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, $timeout, 
                 $scope.localStorage.henrich.watermarkSavedImg = $scope.savedWatermarkImg;
                 $location.path('/resize-download');
             });
-        }, 1000);
+        }, 1000);*/
     }
 })
 
-app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localStorage, uploadedImages, $timeout) {
+app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localStorage, uploadedImages, $http, project, func) {
     $scope.localStorage = $localStorage;
     $scope.watermarkSavedImg = $scope.localStorage.henrich.watermarkSavedImg;
     $scope.projectInfo = $scope.localStorage.henrich.projectInfo;
@@ -632,6 +751,8 @@ app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localSt
     $scope.filenameArr = [];
     $scope.resizeType = 'none';
     $scope.resizedImages = [];
+    $scope.postWatermarkBlobs = [];
+
 
     /*if($scope.localStorage.henrich.skipWatermark == true) {
         $scope.watermarkSavedImg = $localStorage.henrich.preImages;
@@ -644,14 +765,17 @@ app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localSt
     }
     $scope.newFilenameSwitch = function() {
         for(key in $scope.watermarkSavedImg) {
-            var tempType = $scope.preImages[key].type;
-            if(tempType.indexOf('jpeg') !== -1) {
-                var ext = 'jpg';
+            if($scope.preImages[key] !== undefined) {
+                var tempType = $scope.preImages[key].type;
+                if(tempType.indexOf('jpeg') !== -1) {
+                    var ext = 'jpg';
+                }
+                if(tempType.indexOf('png') !== -1) {
+                    var ext = 'png';
+                }
+                $scope.filenameArr[key] = $scope.projectInfo.projectName+'-'+(parseInt(key)+parseInt(1))+'.'+ext;
             }
-            if(tempType.indexOf('png') !== -1) {
-                var ext = 'png';
-            }
-            $scope.filenameArr[key] = $scope.projectInfo.projectName+'-'+(parseInt(key)+parseInt(1))+'.'+ext;
+
         }
     }
 
@@ -794,7 +918,40 @@ app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localSt
 
     }
 
-    $scope.test = function() {
-        //console.log($scope.filenameCheckbox);
+    $scope.saveProject = function() {
+        $localStorage.henrich.postWatermarkBlobs = [];
+        var count = 1;
+        for(key in $scope.watermarkSavedImg) {
+            $localStorage.henrich.postWatermarkBlobs.push({
+                name: $localStorage.henrich.preImages[key].name,
+                obj:$scope.watermarkSavedImg[key].src
+            });
+            if(parseInt(key)+1 == $scope.watermarkSavedImg.length) {
+                //console.log($localStorage.henrich.postWatermarkBlobs);
+                project.saveProject(function(resp) {
+                    $location.path('/projects');
+                })
+            }
+            //console.log($scope.watermarkSavedImg[key]);
+            //var blobKey = 0;
+            /*func.b64toBlob($scope.watermarkSavedImg[key].src, function(blob) {
+                console.log(blob);
+                //var blobUrl = URL.createObjectURL(blob);
+                $localStorage.henrich.postWatermarkBlobs.push({
+                    name: $localStorage.henrich.preImages[blobKey].name,
+                    obj:blob
+                });
+                blobKey = blobKey+1;
+                if(count == $scope.watermarkSavedImg.length) {
+                    console.log($localStorage.henrich.postWatermarkBlobs);
+                    project.saveProject(function() {
+
+                    })
+                }
+                count = count + 1;
+            })*/
+        }
     }
+
+
 })
