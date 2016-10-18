@@ -268,6 +268,11 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
         }
     }
 
+    $('.slide').on('click', function() {
+        $scope.changeColor('brightness', 0);
+    })
+    //ng-change=""
+
     $scope.changeColorValues = function(newval, type) {
         //console.log(newval.key);
         $('#fab-can-'+newval.key+'').before('<div id="spin-'+newval.key+'" class="spin-div"><img src="/assets/img/35.gif"></div>');
@@ -445,9 +450,35 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
         })
     }
 
+
     $scope.changeColor = function(type, key) {
         $scope.changeColorValues($scope.colorValues[key], type);
     }
+
+    var timeoutWatch;
+    $scope.$watch('colorValues', function(newVal, oldVal) {
+        window.clearTimeout(timeoutWatch);
+        timeoutWatch = setTimeout(function(){
+            var i = newVal.length;
+            while(i--) {
+                /*if(newVal[i].maxContrast !== oldVal[i].maxContrast) {
+                    $scope.changeColorValues(newVal[i]);
+                }*/
+                if(oldVal[i] !== undefined && newVal[i].maxBrightness !== oldVal[i].maxBrightness) {
+                    $scope.changeColorValues(newVal[i], 'brightness');
+                }
+                /*if(newVal[i].maxSharpness !== oldVal[i].maxSharpness) {
+                    $scope.changeColorValues(newVal[i]);
+                }*/
+                if(oldVal[i] !== undefined && newVal[i].maxVibrance !== oldVal[i].maxVibrance) {
+                    $scope.changeColorValues(newVal[i], 'vibrance');
+                }
+                if(oldVal[i] !== undefined && newVal[i].maxSharpness !== oldVal[i].maxSharpness) {
+                    $scope.changeColorValues(newVal[i], 'sharpness');
+                }
+            }
+        },100);
+    }, true)
 
 })
 
