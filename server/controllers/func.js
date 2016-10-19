@@ -123,7 +123,6 @@ func.deleteRecord = function(model, field, value, callback) {
 func.updateRecord = function(model, selector, dataObj, callback) {
     query = {};
     query[selector.key] = selector.value;
-    console.log(query);
 
     model.findOne(query, function(err, doc) {
         for (var prop in dataObj) {

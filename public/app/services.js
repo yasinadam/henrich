@@ -121,7 +121,7 @@ app.service('project', function($http, auth, Upload, $location, $localStorage) {
     }
 
     project.updateProject = function(projectInfo, files, callback) {
-        Upload.upload({
+        /*Upload.upload({
             url: '/api/project/update-project',
             method: 'POST',
             data: {
@@ -136,14 +136,14 @@ app.service('project', function($http, auth, Upload, $location, $localStorage) {
         }).error(function(err) {
             //$scope.uploadInProgress = false;
             //AlertService.error('Error uploading file: ' + err.message || err);
-        })
-        /*$http.post('/api/project/update-project', {projectInfo: projectInfo}).then(function(response) {
+        })*/
+        $http.post('/api/project/update-project', {projectInfo: projectInfo}).then(function(response) {
             if(response.data.success == true) {
                 callback(response.data);
             } else {
                 // error
             }
-        })*/
+        })
     }
 
     project.deleteProject = function(projectInfo, callback) {

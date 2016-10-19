@@ -117,7 +117,12 @@ module.exports = function(app, utils, models) {
 	})
 
 	app.post('/api/project/update-project', function(req, res) {
-		var form = new utils.multiparty.Form();
+		func.updateRecord(models.Project, {key:'_id', value: req.body.projectInfo._id}, req.body.projectInfo, function(updateStatus) {
+			if(updateStatus == true) {
+				func.sendInfo(res, true, {message: 'Updated Added'});
+			}
+		})
+		/*var form = new utils.multiparty.Form();
 		form.parse(req, function(err, fields, files) {
 			var projectInfo = {
 				_id: fields['projectInfo[_id]'],
@@ -135,7 +140,7 @@ module.exports = function(app, utils, models) {
 					func.sendInfo(res, true, {message: 'Updated Added'});
 				}
 			})
-		})
+		})*/
 	})
 
 	app.post('/api/project/save-project', function(req, res) {

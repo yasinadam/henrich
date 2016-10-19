@@ -199,7 +199,9 @@ app.controller('AccountEditProjectCtrl', function($scope, $http, $location, auth
     }
     $scope.updateProject = function() {
         project.updateProject($scope.gotProjectInfo, $scope.files, function(resp) {
-            if(resp.success == true) {$location.path('/projects');}
+            if(resp.success == true) {
+                $location.path('/projects');
+            }
         })
     }
     $scope.deleteImage = function(imgName) {
