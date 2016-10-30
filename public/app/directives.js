@@ -39,6 +39,18 @@ app.directive('accountProfileView', function() {
 
 // Utility Directives //
 
+app.directive('imageonload', function() {
+        return {
+            restrict: 'A',
+            link: function(scope, element, attrs) {
+                element.bind('load', function() {
+                    //call the function that was passed
+                    scope.$apply(attrs.imageonload);
+                });
+            }
+        };
+    })
+
 app.directive("passwordVerify", function() {
    return {
       require: "ngModel",

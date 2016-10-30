@@ -1,6 +1,6 @@
 <div navi></div>
 
-<div class="ui internally grid very padded">
+<div id="color-view" class="ui internally grid very padded">
     <div class="row">
         <div class="three wide column">
             <div account-side-navi></div>
@@ -19,7 +19,8 @@
                     <div class="ui link cards">
                       <div class="card" ng-repeat="img in localStorage.henrich.preImages">
                         <div class="image color-image" data-key="{{img.originalKey}}" ng-click="bigImg($event)">
-                            <img src="{{img.url}}" id="fab-can-{{$index}}">
+                            <div id="spin-{{img.originalKey}}" class="spin-div"><img src="/assets/img/35.gif"></div>
+                            <img width="100%" height="100%" src="{{img.url}}" id="fab-can-{{$index}}">
                             <i ng-click="bigImg($event)" class="circular inverted search icon preview-icon"></i>
                         </div>
 
@@ -47,7 +48,7 @@
                 <div class="ui divider "></div>
                 <div class="ui hidden divider "></div>
 
-                <div class="row tr">
+                <div id="color-buttons" class="row tr">
                     <div class="ui buttons">
                         <a ng-click="skipColorCorrection()"><button class="ui button">Skip</button></a>
                         <div class="or"></div>
@@ -63,8 +64,6 @@
 <div foot></div>
 
 <div id="preview-img-modal" class="modal">
-
-
     <div class="ui two column grid">
       <div class="column">
         <div class="ui fluid image">
@@ -75,19 +74,16 @@
       <div class="column">
         <div class="ui fluid image">
           <div class="ui blue ribbon label">After</div>
-          <img class="ui image" src="{{afterImgUrl}}">
+          <img id="img-after" class="ui image" src="">
         </div>
       </div>
     </div>
+</div>
 
-
-
-    <!--<div class="preview-div">
-        <img class="before-img preview-img" src="{{beforeImgUrl}}">
-        <span class="preview-text">Before</span>
+<div id="save-img-modal" class="modal">
+    <div class="ui two column grid">
+      <div class="column fw pad-t-25">
+        <h2 class="ib">Saving Images</h2> <img class="ib fr pad-t-4" src="/assets/img/76.gif">
+      </div>
     </div>
-    <div class="preview-div">
-        <img class="after-img preview-img" src="{{beforeImgUrl}}">
-        <span class="preview-text">After</span>
-    </div>-->
 </div>

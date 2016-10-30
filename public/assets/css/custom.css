@@ -15,8 +15,11 @@ canvas {
 .hide {display:none;}
 .of-auto {overflow: auto;}
 .ib {display: inline-block;}
-
+.fw {width: 100% !important;}
 .no-bord {border: none !important;}
+.fr {float: right;}
+.pad-t-4 {padding-top: 4px;}
+.pad-t-25 {padding-top: 25px !important;}
 
 #splash {
     background: url(../img/splash1.jpg);
@@ -63,17 +66,20 @@ canvas {
     z-index: 10000;
 }
 
-.image > div.spin-div {
+div.spin-div {
+    display: none;
     background: rgba(255, 255, 255, 0.7) none repeat scroll 0 0;
     height: 100%;
     position: absolute;
     text-align: center;
     vertical-align: text-bottom;
     width: 100%;
+    z-index: 100;
 }
 
-.spin-div > img {
-    margin-top: 18%;
+.spin-div img {
+    margin-top: 15%;
+    margin-left: -4px;
 }
 
 span.before-text {

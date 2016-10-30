@@ -137,13 +137,34 @@ app.controller('AccountAddProjectCtrl', function($scope, $http, $location, $loca
       if (!angular.isArray(files)) {
         setTimeout(function () {
           $scope.files = files;
-        });
+      },100);
         return;
       }
 
     }
   });
 
+
+  $scope.previewCount = 0;
+
+  $scope.doThis = function() {
+      $scope.previewCount = $scope.previewCount + 1;
+      if($scope.previewCount == $scope.files.length) {
+          $('#imageProcessBtn').text('Start Image Processing');
+          $('#imageProcessBtn').removeClass('disabled');
+          $.modal.close();
+      }
+  }
+
+  $scope.clearFiles = function() {}
+
+  $scope.loadingPreview = function() {
+      $('#add-img-modal').modal({
+          escapeClose: false,
+          clickClose: false,
+          showClose: false
+      });
+  }
 
     $scope.nextColor = function(files) {
         $scope.localStorage.henrich.projectInfo = $scope.projectInfo;
@@ -218,6 +239,7 @@ app.controller('AccountEditProjectCtrl', function($scope, $http, $location, auth
 
 app.controller('AccountEditProjectColorCtrl', function($scope, $location, $localStorage, uploadedImages, $route) {
     $scope.colorValues = [];
+    $scope.afterImgUrl = [];
     $localStorage.henrich.processedImgs = [];
     $scope.localStorage = $localStorage;
     delete $scope.canmanArr;
@@ -242,6 +264,12 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
         $scope.projectInfo = $scope.localStorage.henrich.projectInfo;
     }
 
+    if($scope.localStorage.henrich) {
+        if($scope.localStorage.henrich.colorValues) {
+            $scope.colorValues = $scope.localStorage.henrich.colorValues;
+        }
+    }
+
     /*Caman.Filter.register("sharpen", function(F){
         if(F==null){F=100}F/=100;
         return this.processKernel("Sharpen",[0,-F,0,-F,4*F+1,-F,0,-F,0])
@@ -264,18 +292,13 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
     }
     $scope.setDefaultColor();
 
-    if($scope.localStorage.henrich) {
-        if($scope.localStorage.henrich.colorValues) {
-            $scope.colorValues = $scope.localStorage.henrich.colorValues;
-        }
-    }
-
     $('.slide').on('click', function() {
         $scope.changeColor('brightness', 0);
     })
+
     //ng-change=""
 
-    $scope.changeColorValues = function(newval, type) {
+    /*$scope.changeColorValues = function(newval, type) {
         //console.log(newval.key);
         $('#fab-can-'+newval.key+'').before('<div id="spin-'+newval.key+'" class="spin-div"><img src="/assets/img/35.gif"></div>');
         var timeout;
@@ -288,7 +311,7 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
                 $scope.maxHeight = $('#fab-can-'+key+'').height();
             }
             var cardHeight = $('.card ').height();
-            var diff = cardHeight - $scope.maxHeight;*/
+            var diff = cardHeight - $scope.maxHeight;
 
             //$scope.canmanArr[newval.key].fn.reset();
             $scope.canmanArr[newval.key].fn.revert(updateContext = true);
@@ -310,7 +333,7 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
             });
             window.clearTimeout(timeout);
         },500);
-    }
+    }*/
 
     $scope.doRefresh = function() {
         var checkExist = setInterval(function() {
@@ -325,36 +348,94 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
     }
 
     $scope.resetSlider = function(key, type) {
-        //console.log('in');
-        //console.log($scope.colorValues[key]);
-
         if(type == 'brightness') {$scope.colorValues[key].maxBrightness = 0;}
         if(type == 'vibrance') {$scope.colorValues[key].maxVibrance = 0;}
         if(type == 'sharpness') {$scope.colorValues[key].maxSharpness = 0;}
-        $scope.changeColorValues($scope.colorValues[key], type);
+        //$scope.changeColorValues($scope.colorValues[key], type);
     }
-
-
 
     $(document).ready(function(){
         var timeout;
         timeout = setTimeout(function(){
             for(key in $scope.localStorage.henrich.preImages) {
+                var canvas = fx.canvas();
+                var image = document.getElementById('fab-can-'+key+'');
+                var texture = canvas.texture(image);
+                canvas.id = 'fab-can-'+key+'';
+
+                var canvasWidth = image.naturalWidth;
+                var canvasHeight = image.naturalHeight;
+                if(image.naturalWidth > 1000) {
+                    var ratio = Math.min(600 / image.naturalWidth, 800 / image.naturalHeight);
+                    canvasWidth = image.naturalWidth * ratio;
+                    canvasHeight = image.naturalHeight * ratio;
+                }
+
+                canvas.draw(texture, canvasWidth, canvasHeight).update();
+
+                image.parentNode.insertBefore(canvas, image);
+                image.parentNode.removeChild(image);
+
                 $scope.canmanArr.push({
                     key: key,
-                    fn: Caman('#fab-can-'+key+'')
+                    fn: canvas,
+                    tex: texture,
+                    img: image
                 })
-
                 if(parseInt(key)+1 == $scope.localStorage.henrich.preImages.length) {
-                    if($scope.localStorage.henrich.colorValues !== undefined && $scope.localStorage.henrich.colorValues.length > 0) {
-                        $scope.doRefresh();
-                    }
-
+                    $scope.updateSavedColors();
+                    /*if($scope.localStorage.henrich) {
+                        if($scope.localStorage.henrich.colorValues) {
+                            for(key in $scope.localStorage.henrich.colorValues) {
+                                console.log('in1');
+                                $scope.colorValues[key].maxBrightness = $scope.localStorage.henrich.colorValues[key].maxBrightness;
+                                //console.log($scope.localStorage.henrich.colorValues[key]);
+                                //$scope.changeColor($scope.localStorage.henrich.colorValues[key]);
+                            }
+                        }
+                    }*/
                 }
             }
             window.clearTimeout(timeout);
-        }, 1000);
+        }, 500);
     });
+
+    $scope.updateSavedColors = function() {
+        for(key in $scope.canmanArr) {
+            var canvasWidth = $scope.canmanArr[key].img.naturalWidth;
+            var canvasHeight = $scope.canmanArr[key].img.naturalHeight;
+            if(canvasWidth > 1000) {
+                var ratio = Math.min(600 / canvasWidth, 800 / canvasHeight);
+                canvasWidth = canvasWidth * ratio;
+                canvasHeight = canvasHeight * ratio;
+            }
+            $scope.canmanArr[key].fn.draw($scope.canmanArr[key].tex, canvasWidth, canvasHeight);
+            $scope.canmanArr[key].fn.brightnessContrast($scope.colorValues[key].maxBrightness/100, 0);
+            $scope.canmanArr[key].fn.hueSaturation(0, $scope.colorValues[key].maxVibrance/100);
+            $scope.canmanArr[key].fn.unsharpMask(1, $scope.colorValues[key].maxSharpness/100);
+            $scope.canmanArr[key].fn.update();
+            $scope.afterImgUrl[key] = $scope.canmanArr[key].fn.toDataURL();
+            $('#img-after').attr('src', $scope.afterImgUrl[key]);
+            $('#spin-'+key+'').css('display', 'none');
+            //$scope.localStorage.henrich.colorValues = $scope.colorValues;
+        }
+
+    }
+
+    $scope.setFabric = function() {
+        var timeout;
+        timeout = setTimeout(function(){
+            for(key in $scope.canmanArr) {
+                fabric.Image.fromURL($scope.localStorage.henrich.preImages[key].url, function(oImg) {
+                    $scope.canmanArr[key].img = oImg;
+                    oImg.scaleToWidth($('#fab-can-'+key+'').width());
+                    // oImg.width(20);
+                    $scope.canmanArr[key].fn.add(oImg);
+                });
+            }
+            window.clearTimeout(timeout);
+        }, 1000);
+    }
 
 
     $scope.applyToAll = function(key) {
@@ -366,32 +447,20 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
                 $scope.colorValues[k].maxBrightness = brightness;
                 $scope.colorValues[k].maxVibrance = vibrance;
                 $scope.colorValues[k].maxSharpness = sharpness;
-                $scope.changeColorValues($scope.colorValues[k], ['brightness','vibrance','sharpness']);
             }
         }
     }
 
-    $.modal.AFTER_CLOSE
-    $(document).on($.modal.AFTER_CLOSE, function(event, modal) {
-      //console.log($route);
-    });
+
+
 
     $scope.bigImg = function(e) {
-        $scope.afterImgUrl = '';
         var key = $(e.currentTarget).attr('data-key');
-        $('#fab-can-'+key+'').before('<div id="spin-'+key+'" class="spin-div"><img src="/assets/img/35.gif"></div>');
         if($localStorage.henrich.preImages[key] !== undefined) {
             $scope.beforeImgUrl = $localStorage.henrich.preImages[key].url;
-            var canvas = document.getElementById('fab-can-'+key+'');
-            canvas.toBlob(function(blob) {
-                url = URL.createObjectURL(blob);
-                $scope.afterImgUrl = url;
-                $scope.$apply();
-                $('#preview-img-modal').modal();
-                $('.spin-div').remove();
-            });
+            $('#img-after').attr('src', $scope.afterImgUrl[key]);
+            $('#preview-img-modal').modal();
         }
-
     }
 
 
@@ -418,69 +487,137 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
         $localStorage.henrich.processedImgs = [];
         for(key in storedImgs) {
             var originKey = $('#fab-can-'+key+'').parent().attr('data-key');
-            var canvas = document.getElementById('fab-can-'+key+'');
+
+            // Get Original Img and Filter
+            var canvas = fx.canvas();
+            var image = $scope.canmanArr[originKey].img;
+            var texture = canvas.texture(image);
+
+            var canvasWidth = image.naturalWidth;
+            var canvasHeight = image.naturalHeight;
+
+            if(image.naturalWidth > 3000 || image.naturalHeight > 3000) {
+                var ratio = Math.min(2000 / image.naturalWidth, 2000 / image.naturalHeight);
+                canvasWidth = canvasWidth * ratio;
+                canvasHeight = canvasHeight * ratio;
+            }
+
+            canvas.draw(texture, canvasWidth, canvasHeight).update();
+
+            // Filter canvas
+            canvas.brightnessContrast($scope.colorValues[originKey].maxBrightness/100, 0);
+            canvas.hueSaturation(0, $scope.colorValues[originKey].maxVibrance/100);
+            canvas.unsharpMask(1, $scope.colorValues[originKey].maxSharpness/100);
+            canvas.update();
+
             canvas.toBlob(function(blob) {
                 url = URL.createObjectURL(blob);
-                //console.log(url);
                 $localStorage.henrich.processedImgs.push({url: url, originalKey: originKey});
                 if(parseInt(key)+1 == storedImgs.length) {
-                    var timeout;
-                    timeout = setTimeout(function() {
-                        window.clearTimeout(timeout);
-                        cb($localStorage.henrich.processedImgs);
-                    },1000)
+                    cb($localStorage.henrich.processedImgs);
+                    //window.clearTimeout(timeout);
                 }
             });
+
+            /*var dataURI = canvas.toDataURL();
+
+            var byteString = atob(dataURI.split(',')[1]);
+            // separate out the mime component
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+            // write the bytes of the string to an ArrayBuffer
+            var ab = new ArrayBuffer(byteString.length);
+            var ia = new Uint8Array(ab);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            // write the ArrayBuffer to a blob, and you're done
+            var bb = new Blob([ab]);
+            var url = URL.createObjectURL(bb);
+            $localStorage.henrich.processedImgs.push({url: url, originalKey: originKey});
+            if(parseInt(originKey)+1 == storedImgs.length) {
+                cb($localStorage.henrich.processedImgs);
+            }*/
+
+
+
+
             /* else {
                 $localStorage.henrich.processedImgs.push({url: storedImgs[key].url, originalKey: originKey});
             }*/
             //if(cb) {
-                if(parseInt(key)+1 == storedImgs.length) {
-                    cb($localStorage.henrich.processedImgs);
-                }
+
             //}
         }
     }
 
-    $scope.saveColorCorrection = function() {
-        var storedImgs = $localStorage.henrich.preImages;
-
-        $scope.saveProcessedImgs(storedImgs, function(resp) {
-                //setTimeout(function(){   //Set timeout
+    $(document).on($.modal.BLOCK, function(event, modal) {
+        if(modal.elm.selector == '#save-img-modal') {
+            var timeout;
+            timeout = setTimeout(function(){
+                var storedImgs = $localStorage.henrich.preImages;
+                $scope.saveProcessedImgs(storedImgs, function(resp) {
+                    $.modal.close();
                     $location.path('/watermark-images');
-                //},1000);
-        })
+                    $scope.$apply();
+                })
+                window.clearTimeout(timeout);
+            }, 1000);
+
+        }
+
+    });
+
+    $scope.saveColorCorrection = function() {
+        $('#save-img-modal').modal({
+            escapeClose: false,
+            clickClose: false,
+            showClose: false
+        });
     }
 
 
-    $scope.changeColor = function(type, key) {
-        $scope.changeColorValues($scope.colorValues[key], type);
+    $scope.changeColor = function(colorObj) {
+        var canvasWidth = $scope.canmanArr[colorObj.key].img.naturalWidth;
+        var canvasHeight = $scope.canmanArr[colorObj.key].img.naturalHeight;
+        if(canvasWidth > 1000) {
+            var ratio = Math.min(600 / canvasWidth, 800 / canvasHeight);
+            canvasWidth = canvasWidth * ratio;
+            canvasHeight = canvasHeight * ratio;
+        }
+        $scope.canmanArr[colorObj.key].fn.draw($scope.canmanArr[colorObj.key].tex, canvasWidth, canvasHeight);
+        $scope.canmanArr[colorObj.key].fn.brightnessContrast(colorObj.maxBrightness/100, 0);
+        $scope.canmanArr[colorObj.key].fn.hueSaturation(0, colorObj.maxVibrance/100);
+        $scope.canmanArr[colorObj.key].fn.unsharpMask(1, colorObj.maxSharpness/100);
+        $scope.canmanArr[colorObj.key].fn.update();
+        $scope.afterImgUrl[colorObj.key] = $scope.canmanArr[colorObj.key].fn.toDataURL();
+        $('#img-after').attr('src', $scope.afterImgUrl[colorObj.key]);
+        $('#spin-'+colorObj.key+'').css('display', 'none');
+        $scope.localStorage.henrich.colorValues = $scope.colorValues;
     }
 
     var timeoutWatch;
     $scope.$watch('colorValues', function(newVal, oldVal) {
         window.clearTimeout(timeoutWatch);
         timeoutWatch = setTimeout(function(){
-            var i = newVal.length;
-            while(i--) {
-                /*if(newVal[i].maxContrast !== oldVal[i].maxContrast) {
-                    $scope.changeColorValues(newVal[i]);
-                }*/
+            for(i in newVal) {
                 if(oldVal[i] !== undefined && newVal[i].maxBrightness !== oldVal[i].maxBrightness) {
-                    $scope.changeColorValues(newVal[i], 'brightness');
+                    $('#spin-'+newVal[i].key+'').css('display', 'block');
+                    $scope.changeColor(newVal[i]);
                 }
-                /*if(newVal[i].maxSharpness !== oldVal[i].maxSharpness) {
-                    $scope.changeColorValues(newVal[i]);
-                }*/
                 if(oldVal[i] !== undefined && newVal[i].maxVibrance !== oldVal[i].maxVibrance) {
-                    $scope.changeColorValues(newVal[i], 'vibrance');
+                    //$('#spin-'+newVal[i].key+'').css('display', 'block');
+                    $scope.changeColor(newVal[i]);
                 }
                 if(oldVal[i] !== undefined && newVal[i].maxSharpness !== oldVal[i].maxSharpness) {
-                    $scope.changeColorValues(newVal[i], 'sharpness');
+                    //$('#spin-'+newVal[i].key+'').css('display', 'block');
+                    $scope.changeColor(newVal[i]);
                 }
             }
         },100);
     }, true)
+
+
+
 
 })
 
@@ -546,8 +683,10 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
         var timeout1;
         timeout1 = setTimeout(function(){
             //console.log('wm');
+            $.modal.close();
             $scope.refreshWm();
             window.clearTimeout(timeout1);
+            window.scrollTo(0, 0);
         },2000)
 
     //});

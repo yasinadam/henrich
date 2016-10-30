@@ -41,17 +41,19 @@
                 <div class="row">
                     <div class="ui two column middle aligned padded container segment basic stackable grid">
                         <div class="column">
-                            Select Images <input multiple ngf-select="" ngf-keep="'distinct'" ng-model="files" name="file" ngf-accept="'image/*'" type="file">
+                            Select Images <input multiple ngf-resize="{width: 2000}" ngf-resize-if="$width > 2000 || $height > 2000" ngf-before-model-change="loadingPreview()" ngf-select="" ngf-keep="'distinct'" ng-model="files" name="file" ngf-change="clearFiles()" ngf-accept="'image/*'" type="file">
                         </div>
-
-
 
                         <div class="column center aligned ">
                             <div class="center aligned column ib">
                                 <div ngf-drop  ng-model="files"
                                      ngf-multiple="true"
                                      ngf-capture="capture"
+                                     ngf-change="clearFiles()"
+                                     ngf-before-model-change="loadingPreview()"
                                      ngf-keep="'distinct'"
+                                     ngf-resize="{width: 2000}"
+                                     ngf-resize-if="$width > 2000 || $height > 2000"
                                      ngf-fix-orientation="orientation"
                                      ngf-allow-dir="allowDir" class="drop-box" ngf-drop-available="dropAvailable">
                                   <span ng-show="dropAvailable">Drop Files Here</span>
@@ -67,7 +69,7 @@
                     <div class="ui link cards">
                       <div class="card" ng-repeat="f in files">
                         <div class="image">
-                            <img ngf-src="files[$index]">
+                            <img imageonload="doThis()" class="preview-upload" ngf-src="files[$index]">
                         </div>
                       </div>
                     </div>
@@ -75,7 +77,7 @@
                 <div class="row">
                     <div class="ui divider"></div>
                     <div class="fw tr">
-                        <button class="ui primary button" ng-click="nextColor(files)" type="submit">Start Image Processing</button>
+                        <button id="imageProcessBtn" class="ui primary button disabled" ng-click="nextColor(files)" type="submit">Start Image Processing</button>
                     </div>
                 </div>
             </div>
@@ -85,3 +87,11 @@
 
 <div class="ui hidden divider"></div><div class="ui hidden divider"></div><div class="ui hidden divider"></div>
 <div foot></div>
+
+<div id="add-img-modal" class="modal">
+    <div class="ui two column grid">
+      <div class="column fw pad-t-25">
+        <h2 class="ib">Uploading Images</h2> <img class="ib fr pad-t-4" src="/assets/img/76.gif">
+      </div>
+    </div>
+</div>
