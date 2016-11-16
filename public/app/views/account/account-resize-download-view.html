@@ -20,7 +20,7 @@
                       <div class="eleven wide column">
                           <div class="ui link cards">
                             <div class="card" ng-repeat="img in watermarkSavedImg">
-                              <div class="image">
+                              <div id="resize-div-{{$index}}" class="image">
                                   <img id="resize-{{$index}}" src="{{img.src}}">
                               </div>
                               <div class="content">

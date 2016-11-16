@@ -1,7 +1,7 @@
 cd C:\Program Files\MongoDB\Server\3.0\bin\
 start /min mongod.exe
 
-cd C:\Users\admin\Desktop\henrich\
+cd C:\Users\admin\Desktop\free\henrich\glfx-version\henrich\
 start /min cmd /k nodemon
 
 cd C:\Users\admin\AppData\Local\Google\Chrome SxS\Application\

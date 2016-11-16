@@ -159,6 +159,7 @@ app.controller('AccountAddProjectCtrl', function($scope, $http, $location, $loca
   $scope.clearFiles = function() {}
 
   $scope.loadingPreview = function() {
+      $('.modal').removeClass('hide');
       $('#add-img-modal').modal({
           escapeClose: false,
           clickClose: false,
@@ -397,6 +398,7 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
                 }
             }
             window.clearTimeout(timeout);
+            $scope.setImageMargin();
         }, 500);
     });
 
@@ -451,7 +453,25 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
         }
     }
 
-
+    $scope.setImageMargin = function() {
+        $scope.imgHeights = [];
+        var tempElems = $('body').find("canvas");
+        var maxHeight = 0;
+        var maxHeightKey;
+        for(var i = 0; i < tempElems.length; i++) {
+            if(tempElems[i].height > maxHeight) {
+                maxHeight = tempElems[i].height;
+                maxHeightKey = i;
+            }
+            $scope.imgHeights.push({key: i, height: tempElems[i].height});
+        }
+        for(var i = 0; i < tempElems.length; i++) {
+            if(i !== maxHeightKey) {
+                var heightDiff = ((maxHeight - tempElems[i].height) / 2) - 2;
+                $('#image-div-'+i+'').css('margin-bottom', heightDiff);
+            }
+        }
+    }
 
 
     $scope.bigImg = function(e) {
@@ -459,6 +479,7 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
         if($localStorage.henrich.preImages[key] !== undefined) {
             $scope.beforeImgUrl = $localStorage.henrich.preImages[key].url;
             $('#img-after').attr('src', $scope.afterImgUrl[key]);
+            $('#preview-img-modal').removeClass('hide');
             $('#preview-img-modal').modal();
         }
     }
@@ -568,6 +589,7 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
     });
 
     $scope.saveColorCorrection = function() {
+        $('#save-img-modal').removeClass('hide');
         $('#save-img-modal').modal({
             escapeClose: false,
             clickClose: false,
@@ -633,7 +655,7 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
         path: '',
         text: 'w',
         textSize: 150,
-        textWidth: 1000,
+        textWidth: 2000,
         margin: 2,
         opacity: 0.000001,
         textBg: 'rgb(60, 56, 56)',
@@ -643,9 +665,9 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
 
     $scope.wmOpts = {
         path: '',
-        text: 'Watermark',
+        text: 'personal watermark text',
         textSize: 150,
-        textWidth: 1000,
+        textWidth: 2000,
         margin: 2,
         opacity: 0.8,
         textBg: 'rgb(60, 56, 56)',
@@ -914,7 +936,7 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
     }
 })
 
-app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localStorage, uploadedImages, $http, project, func) {
+app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localStorage, uploadedImages, $http, project, func, $timeout) {
     $scope.localStorage = $localStorage;
     $scope.watermarkSavedImg = $scope.localStorage.henrich.watermarkSavedImg;
     $scope.projectInfo = $scope.localStorage.henrich.projectInfo;
@@ -981,6 +1003,43 @@ app.controller('AccountResizeDownloadCtrl', function($scope, $location, $localSt
             $scope.resizeType = 'medium';
         },
     });
+
+    $scope.setImageMargin = function(tempElems) {
+        $scope.imgHeights = [];
+        var maxHeight = 0;
+        var maxHeightKey;
+        tempElems[0].clientHeight;
+        for(var i = 0; i < tempElems.length; i++) {
+            if(tempElems[i].clientHeight > maxHeight) {
+                maxHeight = tempElems[i].clientHeight;
+                maxHeightKey = i;
+            }
+            $scope.imgHeights.push({key: i, height: tempElems[i].clientHeight});
+        }
+        for(var i = 0; i < tempElems.length; i++) {
+            if(i !== maxHeightKey) {
+                var heightDiff = (maxHeight - tempElems[i].height) - 2;
+                $('#resize-div-'+i+'').css('margin-bottom', heightDiff);
+            }
+        }
+    }
+
+    var wmLoadTimer = setInterval(function(){
+        var tempElems = $('body').find("div.image img");
+        var flag = 0;
+        for(var i = 0; i < tempElems.length; i++) {
+            console.log(tempElems[i].clientHeight);
+            if(tempElems[i].clientHeight > 0) {
+                flag = flag+1;
+            }
+        }
+        if(flag == tempElems.length) {
+            $scope.setImageMargin(tempElems);
+            clearInterval(wmLoadTimer);
+        }
+    }, 500);
+
+
 
     $scope.resizeImg = function(imgData, key, desiredWidth, ratioInput, callback) {
         var imgTemp = document.getElementById("resize-"+key);

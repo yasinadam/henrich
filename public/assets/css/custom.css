@@ -1,3 +1,5 @@
+body::-webkit-scrollbar {width: 0 !important}
+
 canvas {
     height: 100%;
     width: 100%;
@@ -12,7 +14,7 @@ canvas {
     padding-left: 25px !important;
     padding-right: 25px !important;
 }
-.hide {display:none;}
+.hide {display:none !important;}
 .of-auto {overflow: auto;}
 .ib {display: inline-block;}
 .fw {width: 100% !important;}

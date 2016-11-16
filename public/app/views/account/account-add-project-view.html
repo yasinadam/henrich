@@ -19,7 +19,7 @@
                     <form class="ui form">
                         <div class="field">
                             <label>Project Name</label>
-                            <input ng-model="projectInfo.projectName" name="projectName" placeholder="Bloomfields Plaza" type="text">
+                            <input id="project-name-input" ng-model="projectInfo.projectName" name="projectName" placeholder="Bloomfields Plaza" type="text" autofocus>
                         </div>
                         <div class="field">
                             <label>Project Description</label>
@@ -88,7 +88,7 @@
 <div class="ui hidden divider"></div><div class="ui hidden divider"></div><div class="ui hidden divider"></div>
 <div foot></div>
 
-<div id="add-img-modal" class="modal">
+<div id="add-img-modal" class="modal hide">
     <div class="ui two column grid">
       <div class="column fw pad-t-25">
         <h2 class="ib">Uploading Images</h2> <img class="ib fr pad-t-4" src="/assets/img/76.gif">
