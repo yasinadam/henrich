@@ -8,7 +8,7 @@
         <div class="twelve wide column">
             <div class="ui padded container segment">
                 <h2 class="ui header">Image Color Correction
-                    <a ng-click="backToAddProject()"><button class="ui right floated button">Add Project<i class="reply right icon"></i></button></a>
+                    <a ng-click="backToFixPerspective()"><button class="ui right floated button">Fix Converging Lines<i class="reply right icon"></i></button></a>
                 </h2>
 
 
@@ -17,10 +17,10 @@
 
                 <div class="row">
                     <div class="ui link cards">
-                      <div class="card" ng-repeat="img in localStorage.henrich.preImages">
-                        <div id="image-div-{{$index}}" class="image color-image" data-key="{{img.originalKey}}" ng-click="bigImg($event)">
-                            <div id="spin-{{img.originalKey}}" class="spin-div"><img src="/assets/img/35.gif"></div>
-                            <img width="100%" height="100%" class="color-image-preview" src="{{img.url}}" id="fab-can-{{$index}}">
+                      <div class="card" ng-repeat="img in localStorage.henrich.convergCanvas">
+                        <div id="image-div-{{$index}}" class="image color-image" data-key="{{$index}}" ng-click="bigImg($event)">
+                            <div id="spin-{{$index}}" class="spin-div"><img src="/assets/img/35.gif"></div>
+                            <img width="100%" height="100%" class="color-image-preview" src="{{img.image}}" id="fab-can-{{$index}}">
                             <i ng-click="bigImg($event)" class="circular inverted search icon preview-icon"></i>
                         </div>
 

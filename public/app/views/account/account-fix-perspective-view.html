@@ -1,0 +1,48 @@
+<div navi></div>
+
+<div id="color-view" class="ui internally grid very padded">
+    <div class="row">
+        <div class="three wide column">
+            <div account-side-navi></div>
+        </div>
+        <div class="twelve wide column">
+            <div class="ui padded container segment">
+                <h2 class="ui header">Fix Converging Lines
+                    <a ng-click="backToAddProject()"><button class="ui right floated button">Add Project<i class="reply right icon"></i></button></a>
+                </h2>
+
+
+                <div class="ui divider "></div>
+                <div class="ui hidden divider "></div>
+
+                <div class="row">
+                    <div class="ui link cards">
+                      <div class="card" ng-repeat="img in localStorage.henrich.preImages">
+                        <div id="image-div-{{$index}}" class="image color-image converging-div" data-key="{{img.originalKey}}" ng-click="bigImg($event)">
+                            <div id="spin-{{img.originalKey}}" class="spin-div"><img src="/assets/img/35.gif"></div>
+                            <img ng-click="edit($index)" width="100%" height="100%" class="color-image-preview" src="{{img.url}}" id="fab-can-{{$index}}">
+                            <i ng-click="resetPerspec($index)" class="circular inverted undo icon preview-icon"></i>
+                        </div>
+
+                      </div>
+                    </div>
+                </div>
+
+                <div class="ui divider "></div>
+                <div class="ui hidden divider "></div>
+
+                <div id="color-buttons" class="row tr">
+                    <div class="ui buttons">
+                        <a ng-click="skipPerspecCorrection()"><button class="ui button">Skip</button></a>
+                        <div class="or"></div>
+                        <button ng-click="savePerspecCorrection()" class="ui positive button">Save</button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="ui hidden divider"></div><div class="ui hidden divider"></div><div class="ui hidden divider"></div>
+<div foot></div>

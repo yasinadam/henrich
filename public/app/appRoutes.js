@@ -55,6 +55,12 @@ app.config(function($routeProvider, $locationProvider, $httpProvider) {
         type        : 'protected'
     })
 
+    .when('/converging-lines', {
+        templateUrl : viewDir+'account/account-fix-perspective-view.html',
+        controller  : 'AccountFixPerspectiveCtrl',
+        type        : 'protected'
+    })
+
     .when('/color-correction', {
         templateUrl : viewDir+'account/account-add-project-color-view.html',
         controller  : 'AccountEditProjectColorCtrl',
@@ -85,24 +91,26 @@ app.run(function($http, $localStorage, $log, $location, details, $rootScope) {
     if($localStorage.henrich == undefined) {$localStorage.henrich = {};}
     $('body').hide();
     $rootScope.$on('$routeChangeSuccess', function (e, current, pre) {
-        var type = current.$$route.type;
-        if(type !== undefined) {
+        if(current.$$route.type) {
             var type = current.$$route.type;
-            if(type == 'protected') {
-                var token = $localStorage.token;
-                if(token) {
-                    $http.post('/api/member/check-token', {data: token}).then(function(res) {
-                        if(res.data.success == true) {
-                            // verified
-                            details.loggedIn = true;
-                        } else {
-                            details.loggedIn = false;
-                            $location.path('/login');
-                        }
-                    })
-                } else {
-                    details.loggedIn = false;
-                    $location.path('/login');
+            if(type !== undefined) {
+                var type = current.$$route.type;
+                if(type == 'protected') {
+                    var token = $localStorage.token;
+                    if(token) {
+                        $http.post('/api/member/check-token', {data: token}).then(function(res) {
+                            if(res.data.success == true) {
+                                // verified
+                                details.loggedIn = true;
+                            } else {
+                                details.loggedIn = false;
+                                $location.path('/login');
+                            }
+                        })
+                    } else {
+                        details.loggedIn = false;
+                        $location.path('/login');
+                    }
                 }
             }
         }
