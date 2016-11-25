@@ -291,8 +291,8 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
                 // replace the image with the canvas
                 image.parentNode.insertBefore(canvas, image);
                 image.parentNode.removeChild(image);
-                //var imgHeight2 = $('#converg-'+key+'').attr('height');
-                //var imgWidth2 = $('#converg-'+key+'').attr('width');
+                //var imgHeight = $('#converg-'+key+'').height();
+                //var imgWidth = $('#converg-'+key+'').width();
                 var timeout;
                 var imgHeight = $('#image-div-'+key+'').height();
                 var imgWidth = $('#image-div-'+key+'').width();
@@ -339,8 +339,9 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
                     var before = [nub1y,nub1x,nub2y,nub2x,nub3y,nub3x,nub4y,nub4x];
                     var after = [newNub1y,newNub1x,newNub2y,newNub2x,newNub3y,newNub3x,newNub4y,newNub4x];
 
-                    var ratioW = image.naturalWidth / imgWidth;
-                    var ratioH = image.naturalHeight / imgHeight;
+                    var ratioW = Math.ceil(image.naturalWidth / imgWidth);
+                    var ratioH = Math.ceil(image.naturalHeight / imgHeight);
+                    console.log(ratioW+' - '+ratioH);
 
                     var before2 = [nub1y*ratioH,nub1x*ratioW,nub2y*ratioH,nub2x*ratioW,nub3y*ratioH,nub3x*ratioW,nub4y*ratioH,nub4x*ratioW];
                     var after2 = [newNub1y*ratioH,newNub1x*ratioW,newNub2y*ratioH,newNub2x*ratioW,newNub3y*ratioH,newNub3x*ratioW,newNub4y*ratioH,newNub4x*ratioW];
@@ -394,7 +395,7 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
                             console.log(key);
                             $scope.startPerspec(key);
                         }
-                    },1000)
+                    },500)
                 }
             }
             window.clearTimeout(timeout);
@@ -407,6 +408,8 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
             var texture = $scope.perspecArr[key].tex;
             var imgHeight = $('#image-div-'+key+'').height();
             var imgWidth = $('#image-div-'+key+'').width();
+            //var imgHeight = $('#converg-'+key+'').height();
+            //var imgWidth = $('#converg-'+key+'').width();
             // Add Nubs
             var nub1x = 0;
             var nub1y = 0;
@@ -446,6 +449,8 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
             var texture = $scope.perspecArr[key].tex;
             var imgHeight = $('#image-div-'+key+'').height();
             var imgWidth = $('#image-div-'+key+'').width();
+            //var imgHeight = $('#converg-'+key+'').height();
+            //var imgWidth = $('#converg-'+key+'').width();
             // Add Nubs
             var nub1x = 0;
             var nub1y = 0;
@@ -831,10 +836,10 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
     $scope.skipColorCorrection = function() {
         delete $localStorage.henrich.colorValues;
         $scope.setDefaultColor(function() {
-            var storedImgs = $localStorage.henrich.preImages;
+            var storedImgs = $localStorage.henrich.convergCanvas;
             $localStorage.henrich.processedImgs = [];
             for(key in storedImgs) {
-                $localStorage.henrich.processedImgs.push({url: storedImgs[key].url});
+                $localStorage.henrich.processedImgs.push({url: storedImgs[key].image});
                 if(parseInt(key)+1 == storedImgs.length) {
                     $location.path('/watermark-images');
                 }
