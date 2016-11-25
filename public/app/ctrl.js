@@ -387,6 +387,15 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
                         canvas1.draw(texture1).perspective(before, after).update();
                     }
                 });
+                if(parseInt(key)+1 == $scope.localStorage.henrich.preImages.length) {
+                    var timeout3;
+                    timeout3 = setTimeout(function(){
+                        for(key in $scope.localStorage.henrich.preImages) {
+                            console.log(key);
+                            $scope.resetPerspec(key);
+                        }
+                    },1000)
+                }
             }
             window.clearTimeout(timeout);
             //$scope.setImageMargin();
@@ -397,8 +406,8 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
         if($scope.perspecValuesArr[key]) {
             var canvas = $scope.perspecArr[key].fn;
             var texture = $scope.perspecArr[key].tex;
-            var imgHeight = $('#converg-'+key+'').attr('height');
-            var imgWidth = $('#converg-'+key+'').attr('width');
+            var imgHeight = $('#image-div-'+key+'').height();
+            var imgWidth = $('#image-div-'+key+'').width();
             // Add Nubs
             var nub1x = 0;
             var nub1y = 0;
