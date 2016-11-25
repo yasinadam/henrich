@@ -291,10 +291,17 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
                 // replace the image with the canvas
                 image.parentNode.insertBefore(canvas, image);
                 image.parentNode.removeChild(image);
-                //var imgHeight = $('#converg-'+key+'').attr('height');
-                //var imgWidth = $('#converg-'+key+'').attr('width');
+                var imgHeight2 = $('#converg-'+key+'').attr('height');
+                var imgWidth2 = $('#converg-'+key+'').attr('width');
                 var imgHeight = $('#converg-'+key+'').height();
                 var imgWidth = $('#converg-'+key+'').width();
+                /*console.log('imgHeight '+imgHeight);
+                console.log('imgWidth '+imgWidth);
+                console.log('imgHeight2 '+imgHeight2);
+                console.log('imgWidth2 '+imgWidth2);*/
+                console.log(canvas.height);
+
+
                 $('#converg-'+key+'').after('<div id="nubs-'+key+'" style="height:'+imgHeight+'px;" class="nubs"></div>');
                 // Add Nubs
                 var nub1x = 0;

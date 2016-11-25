@@ -169,8 +169,8 @@ span.after-text {
      position: absolute;
  }
 
- .perspective-card:hover {
+ /*.perspective-card:hover {
      webkit-transform: translateY(0px) !important;
     -ms-transform: translateY(0px) !important;
     transform: translateY(0px) !important;
- }
+ }*/
