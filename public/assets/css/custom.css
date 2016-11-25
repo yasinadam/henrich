@@ -168,3 +168,9 @@ span.after-text {
      cursor: move;
      position: absolute;
  }
+
+ .perspective-card:hover {
+     webkit-transform: translateY(0px) !important;
+    -ms-transform: translateY(0px) !important;
+    transform: translateY(0px) !important;
+ }

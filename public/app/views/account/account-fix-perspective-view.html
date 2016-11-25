@@ -17,7 +17,7 @@
 
                 <div class="row">
                     <div class="ui link cards">
-                      <div class="card" ng-repeat="img in localStorage.henrich.preImages">
+                      <div class="card perspective-card" ng-repeat="img in localStorage.henrich.preImages">
                         <div id="image-div-{{$index}}" class="image color-image converging-div" data-key="{{img.originalKey}}" ng-click="bigImg($event)">
                             <div id="spin-{{img.originalKey}}" class="spin-div"><img src="/assets/img/35.gif"></div>
                             <img ng-click="edit($index)" width="100%" height="100%" class="color-image-preview" src="{{img.url}}" id="fab-can-{{$index}}">
