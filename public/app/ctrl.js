@@ -291,15 +291,16 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
                 // replace the image with the canvas
                 image.parentNode.insertBefore(canvas, image);
                 image.parentNode.removeChild(image);
-                var imgHeight2 = $('#converg-'+key+'').attr('height');
-                var imgWidth2 = $('#converg-'+key+'').attr('width');
-                var imgHeight = $('#converg-'+key+'').height();
-                var imgWidth = $('#converg-'+key+'').width();
+                //var imgHeight2 = $('#converg-'+key+'').attr('height');
+                //var imgWidth2 = $('#converg-'+key+'').attr('width');
+                var timeout;
+                var imgHeight = $('#image-div-'+key+'').height();
+                var imgWidth = $('#image-div-'+key+'').width();
                 /*console.log('imgHeight '+imgHeight);
                 console.log('imgWidth '+imgWidth);
                 console.log('imgHeight2 '+imgHeight2);
                 console.log('imgWidth2 '+imgWidth2);*/
-                console.log(canvas.height);
+                //console.log(canvas.height);
 
 
                 $('#converg-'+key+'').after('<div id="nubs-'+key+'" style="height:'+imgHeight+'px;" class="nubs"></div>');
@@ -393,41 +394,44 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
     });
 
     $scope.resetPerspec = function(key) {
-        var canvas = $scope.perspecArr[key].fn;
-        var texture = $scope.perspecArr[key].tex;
-        var imgHeight = $('#converg-'+key+'').attr('height');
-        var imgWidth = $('#converg-'+key+'').attr('width');
-        // Add Nubs
-        var nub1x = 0;
-        var nub1y = 0;
-        var nub2x = 0;
-        var nub2y = imgWidth;
-        var nub3x = imgHeight;
-        var nub3y = 0;
-        var nub4x = imgHeight;
-        var nub4y = imgWidth;
-        var before = [nub1y,nub1x,nub2y,nub2x,nub3y,nub3x,nub4y,nub4x];
-        var after = [nub1y,nub1x,nub2y,nub2x,nub3y,nub3x,nub4y,nub4x];
+        if($scope.perspecValuesArr[key]) {
+            var canvas = $scope.perspecArr[key].fn;
+            var texture = $scope.perspecArr[key].tex;
+            var imgHeight = $('#converg-'+key+'').attr('height');
+            var imgWidth = $('#converg-'+key+'').attr('width');
+            // Add Nubs
+            var nub1x = 0;
+            var nub1y = 0;
+            var nub2x = 0;
+            var nub2y = imgWidth;
+            var nub3x = imgHeight;
+            var nub3y = 0;
+            var nub4x = imgHeight;
+            var nub4y = imgWidth;
+            var before = [nub1y,nub1x,nub2y,nub2x,nub3y,nub3x,nub4y,nub4x];
+            var after = [nub1y,nub1x,nub2y,nub2x,nub3y,nub3x,nub4y,nub4x];
 
-        $scope.perspecValuesArr[key] = {
-            key: key,
-            before : before,
-            after : after
-        };
+            $scope.perspecValuesArr[key] = {
+                key: key,
+                before : before,
+                after : after
+            };
 
-        canvas.draw(texture).perspective(before, after).update();
+            canvas.draw(texture).perspective(before, after).update();
 
-        var timeout;
-        timeout = setTimeout(function(){
-            $('#nub1.nub-'+key+'').css('left', '0px');
-            $('#nub1.nub-'+key+'').css('top', '0px');
-            $('#nub2.nub-'+key+'').css('left', ''+imgWidth+'px');
-            $('#nub2.nub-'+key+'').css('top', '0px');
-            $('#nub3.nub-'+key+'').css('left', '0px');
-            $('#nub3.nub-'+key+'').css('top', ''+imgHeight+'px');
-            $('#nub4.nub-'+key+'').css('left', ''+imgWidth+'px');
-            $('#nub4.nub-'+key+'').css('top', ''+imgHeight+'px');
-        }, 200)
+            var timeout;
+            timeout = setTimeout(function(){
+                $('#nub1.nub-'+key+'').css('left', '0px');
+                $('#nub1.nub-'+key+'').css('top', '0px');
+                $('#nub2.nub-'+key+'').css('left', ''+imgWidth+'px');
+                $('#nub2.nub-'+key+'').css('top', '0px');
+                $('#nub3.nub-'+key+'').css('left', '0px');
+                $('#nub3.nub-'+key+'').css('top', ''+imgHeight+'px');
+                $('#nub4.nub-'+key+'').css('left', ''+imgWidth+'px');
+                $('#nub4.nub-'+key+'').css('top', ''+imgHeight+'px');
+            }, 500)
+        }
+
     }
 
     $scope.savePerspecCorrection = function() {
