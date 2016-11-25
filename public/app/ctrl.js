@@ -392,7 +392,7 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
                     timeout3 = setTimeout(function(){
                         for(key in $scope.localStorage.henrich.preImages) {
                             console.log(key);
-                            $scope.resetPerspec(key);
+                            $scope.startPerspec(key);
                         }
                     },1000)
                 }
@@ -401,6 +401,44 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
             //$scope.setImageMargin();
         }, 500);
     });
+
+    $scope.startPerspec = function(key) {
+            var canvas = $scope.perspecArr[key].fn;
+            var texture = $scope.perspecArr[key].tex;
+            var imgHeight = $('#image-div-'+key+'').height();
+            var imgWidth = $('#image-div-'+key+'').width();
+            // Add Nubs
+            var nub1x = 0;
+            var nub1y = 0;
+            var nub2x = 0;
+            var nub2y = imgWidth;
+            var nub3x = imgHeight;
+            var nub3y = 0;
+            var nub4x = imgHeight;
+            var nub4y = imgWidth;
+            var before = [nub1y,nub1x,nub2y,nub2x,nub3y,nub3x,nub4y,nub4x];
+            var after = [nub1y,nub1x,nub2y,nub2x,nub3y,nub3x,nub4y,nub4x];
+
+            $scope.perspecValuesArr[key] = {
+                key: key,
+                before : before,
+                after : after
+            };
+
+            canvas.draw(texture).perspective(before, after).update();
+
+            var timeout;
+            timeout = setTimeout(function(){
+                $('#nub1.nub-'+key+'').css('left', '0px');
+                $('#nub1.nub-'+key+'').css('top', '0px');
+                $('#nub2.nub-'+key+'').css('left', ''+imgWidth+'px');
+                $('#nub2.nub-'+key+'').css('top', '0px');
+                $('#nub3.nub-'+key+'').css('left', '0px');
+                $('#nub3.nub-'+key+'').css('top', ''+imgHeight+'px');
+                $('#nub4.nub-'+key+'').css('left', ''+imgWidth+'px');
+                $('#nub4.nub-'+key+'').css('top', ''+imgHeight+'px');
+            }, 500)
+    }
 
     $scope.resetPerspec = function(key) {
         if($scope.perspecValuesArr[key]) {
