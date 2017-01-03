@@ -99,6 +99,7 @@ app.controller('AccountProjectsCtrl', function($scope, project, $location, $loca
         delete $localStorage.henrich.watermarkSavedImg;
         delete $localStorage.henrich.watermarkSavedOpts;
         delete $localStorage.henrich.postWatermarkBlobs;
+        delete $localStorage.henrich.firstWatermarkVisit;
         $location.path('/add-project');
     }
 
@@ -253,6 +254,7 @@ app.controller('AccountFixPerspectiveCtrl', function($scope, $location, $localSt
         delete $localStorage.henrich.watermarkSavedImg;
         delete $localStorage.henrich.watermarkSavedOpts;
         delete $localStorage.henrich.postWatermarkBlobs;
+        delete $localStorage.henrich.firstWatermarkVisit;
         $location.path('/add-project');
     }
 
@@ -605,6 +607,7 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
         delete $localStorage.henrich.watermarkSavedImg;
         delete $localStorage.henrich.watermarkSavedOpts;
         delete $localStorage.henrich.postWatermarkBlobs;
+        delete $localStorage.henrich.firstWatermarkVisit;
         $location.path('/converging-lines');
     }
 
@@ -1002,7 +1005,7 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
         text: 'w',
         textSize: 150,
         textWidth: 2000,
-        margin: 2,
+        margin: 0,
         opacity: 0.000001,
         textBg: 'rgb(60, 56, 56)',
         textColor: 'rgb(255, 255, 255)',
@@ -1014,7 +1017,7 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
         text: 'personal watermark text',
         textSize: 150,
         textWidth: 2000,
-        margin: 2,
+        margin: 0,
         opacity: 0.8,
         textBg: 'rgb(60, 56, 56)',
         textColor: 'rgb(255, 255, 255)',
@@ -1039,6 +1042,20 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
             tempEl.attr('src', $scope.processedImgs[0].url);
             tempEl.appendTo('#watermark-preview-div');
             $(tempEl).load(function() {
+                if($localStorage.henrich.firstWatermarkVisit == true) {
+                    // dont change font
+                } else {
+                    var natWidth = document.getElementById('watermark-preview').naturalWidth;
+                    var natHeight = document.getElementById('watermark-preview').naturalHeight;
+                    console.log('natWidth: '+natWidth);
+                    $scope.wmOpts.textWidth = natWidth;
+                    var rat = natWidth / natHeight;
+                    var rat2 = natWidth / 10;
+                    var rat3 = Math.ceil(rat2 / rat);
+                    console.log(rat3);
+                    $scope.wmOpts.textSize = rat3;
+                    $localStorage.henrich.firstWatermarkVisit = true;
+                }
                 $('.watermark-preview').watermark($scope.wmOpts);
             });
             window.clearTimeout(timeout);
@@ -1057,6 +1074,7 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
             var rat = natWidth / natHeight;
             var rat2 = natWidth / 10;
             var rat3 = Math.ceil(rat2 / rat);
+            console.log(rat3);
             $scope.wmOpts.textSize = rat3;*/
             $scope.refreshWm();
             window.clearTimeout(timeout1);

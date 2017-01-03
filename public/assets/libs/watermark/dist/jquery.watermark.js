@@ -118,7 +118,10 @@
                 ctx = canvas.getContext('2d'),
 
                 w = set.textWidth,
-                h = parseInt(set.textSize)+50;
+                h = parseInt(set.textSize);
+                var percentDiv = set.textSize / 100;
+                var percent = percentDiv * 25;
+                h = parseInt(set.textSize)+percent;
 
             canvas.width = w;
             canvas.height = h;
