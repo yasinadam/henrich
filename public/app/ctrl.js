@@ -995,6 +995,7 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
     $scope.savedWatermarkImg = [];
     $scope.savedWatermarkImgTemp = [];
     $scope.file = '';
+    $scope.wmCount = 0;
 
     $scope.wmOptsBlank = {
         path: '',
@@ -1032,7 +1033,6 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
         timeout = setTimeout(function(){
             //console.log('refreshed');
             $localStorage.henrich.watermarkSavedOpts = $scope.wmOpts;
-            //console.log($scope.wmOpts);
             var tempEl = $('.watermark-preview').clone();
             $('.watermark-preview').remove();
             //var img = $('<img class="watermark-preview">');
@@ -1049,8 +1049,15 @@ app.controller('AccountAddWatermark', function($scope, $localStorage, Upload, $l
     //$('.watermark-preview').load(function() {
         var timeout1;
         timeout1 = setTimeout(function(){
-            //console.log('wm');
             $.modal.close();
+            /*var natWidth = document.getElementById('watermark-preview').naturalWidth;
+            var natHeight = document.getElementById('watermark-preview').naturalHeight;
+            console.log('natWidth: '+natWidth);
+            $scope.wmOpts.textWidth = natWidth;
+            var rat = natWidth / natHeight;
+            var rat2 = natWidth / 10;
+            var rat3 = Math.ceil(rat2 / rat);
+            $scope.wmOpts.textSize = rat3;*/
             $scope.refreshWm();
             window.clearTimeout(timeout1);
             window.scrollTo(0, 0);

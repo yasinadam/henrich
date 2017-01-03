@@ -174,3 +174,9 @@ span.after-text {
     -ms-transform: translateY(0px) !important;
     transform: translateY(0px) !important;
  }*/
+
+ .ui.cards a.card:hover, .ui.link.card:hover, .ui.link.cards .card:hover, a.ui.card:hover {
+     webkit-transform: translateY(0px) !important;
+    -ms-transform: translateY(0px) !important;
+    transform: translateY(0px) !important;
+}
