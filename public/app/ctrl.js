@@ -765,7 +765,7 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
                 canvasHeight = canvasHeight * ratio;
             }
             $scope.canmanArr[key].fn.draw($scope.canmanArr[key].tex, canvasWidth, canvasHeight);
-            $scope.canmanArr[key].fn.brightnessContrast($scope.colorValues[key].maxBrightness/100, 0);
+            $scope.canmanArr[key].fn.vibrance($scope.colorValues[key].maxBrightness/100, 0);
             $scope.canmanArr[key].fn.hueSaturation(0, $scope.colorValues[key].maxVibrance/100);
             $scope.canmanArr[key].fn.unsharpMask(1, $scope.colorValues[key].maxSharpness/100);
             $scope.canmanArr[key].fn.update();
@@ -955,7 +955,8 @@ app.controller('AccountEditProjectColorCtrl', function($scope, $location, $local
             canvasHeight = canvasHeight * ratio;
         }
         $scope.canmanArr[colorObj.key].fn.draw($scope.canmanArr[colorObj.key].tex, canvasWidth, canvasHeight);
-        $scope.canmanArr[colorObj.key].fn.brightnessContrast(colorObj.maxBrightness/100, 0);
+        //$scope.canmanArr[colorObj.key].fn.vibrance(colorObj.maxBrightness/100, 0);
+        $scope.canmanArr[colorObj.key].fn.vibrance(colorObj.maxBrightness);
         $scope.canmanArr[colorObj.key].fn.hueSaturation(0, colorObj.maxVibrance/100);
         $scope.canmanArr[colorObj.key].fn.unsharpMask(1, colorObj.maxSharpness/100);
         $scope.canmanArr[colorObj.key].fn.update();

@@ -167,6 +167,7 @@ span.after-text {
      -webkit-box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
      cursor: move;
      position: absolute;
+     z-index: 100;
  }
 
  /*.perspective-card:hover {
